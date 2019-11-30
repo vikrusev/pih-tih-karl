@@ -1,2 +1,2 @@
 # pih-tih-kal
-Expand your knowledge about compunds
+Expand your knowledge about compounds
