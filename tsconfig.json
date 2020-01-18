@@ -1,22 +1,27 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
-    "outDir": "./dist/out-tsc",
-    "sourceMap": true,
-    "declaration": false,
-    "module": "es2015",
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
+    "noImplicitAny": false,
+    "module": "commonjs",
+    "noEmitOnError": true,
+    "removeComments": false,
+    "allowJs": true,
+    "checkJs": true,
     "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "es5",
+    "target": "es2017",
     "typeRoots": [
-      "node_modules/@types"
+      "./common/@types"
     ],
-    "lib": [
-      "es2018",
-      "dom"
-    ]
-  }
+    "paths": {
+      "*": [
+        "./common/*"
+      ]
+    },
+    "resolveJsonModule": true
+  },
+  "exclude": [
+    "./frontend/src/angular_js",
+    "./frontend/node_modules",
+    "./backend/node_modules",
+    "**/*.spec.ts"
+  ]
 }
