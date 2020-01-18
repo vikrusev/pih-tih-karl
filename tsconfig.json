@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "module": "commonjs",
     "noEmitOnError": true,
     "removeComments": false,
@@ -19,7 +19,6 @@
     "resolveJsonModule": true
   },
   "exclude": [
-    "./frontend/src/angular_js",
     "./frontend/node_modules",
     "./backend/node_modules",
     "**/*.spec.ts"
