@@ -4,15 +4,8 @@
   "license": "MIT",
   "scripts": {
     "ng": "cd frontend && npm run ng",
-    "start": "cd frontend && npm start",
+    "start": "cd frontend && npm run start",
     "build": "cd frontend && npm run build",
-    "backend": "cd backend && npm start",
-    "test": "cd backend && npm test",
-    "frontend-browse-linux": "xdg-open http://localhost:4200",
-    "backend-browse-linux": "xdg-open http://localhost:3000",
-    "frontend-browse-windows": "start http://localhost:4200",
-    "backend-browse-windows": "start http://localhost:3000"
-  },
-  "dependencies": { },
-  "devDependencies": { }
+    "test": "cd backend && npm test"
+  }
 }
