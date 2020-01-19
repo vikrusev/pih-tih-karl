@@ -5,7 +5,7 @@
   "projects": {
     "pih-tih-karl": {
       "root": "",
-      "sourceRoot": "src",
+      "sourceRoot": "frontend/src",
       "projectType": "application",
       "prefix": "app",
       "schematics": {
@@ -17,18 +17,18 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/pih-tih-karl",
+            "outputPath": "../backend/public",
             "deleteOutputPath": false,
-            "index": "src/index.html",
+            "index": "src/angular-root.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
-              "src/favicon.ico",
-              "src/assets"
+              "frontend/src/favicon.ico",
+              "frontend/src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/assets/scss/styles.scss"
             ],
             "scripts": [],
             "es5BrowserSupport": true
