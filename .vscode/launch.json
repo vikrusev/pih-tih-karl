@@ -15,7 +15,8 @@
                 "<node_internals>/**"
             ],
             "env": {
-                "NODE_ENV": "dev"
+                "NODE_ENV": "dev",
+                "PORT": "3000"
             },
             "serverReadyAction": {
                 "pattern": "listening on.* ([0-9]+)",
