@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'pih-tih-karl';
+  title: string = 'pih-tih-karl';
+  proxyResponse: string = '';
+
+  constructor(private http: HttpClient) { }
+
+  async testProxy() {
+    this.http.get('/test-proxy', { responseType: 'text' }).subscribe(res => this.proxyResponse = res);
+  }
 }
