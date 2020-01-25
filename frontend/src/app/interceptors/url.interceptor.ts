@@ -12,9 +12,8 @@ export class UrlInterceptor implements HttpInterceptor {
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const newUrl = environment.apiUrl + req.urlWithParams;
-        let path = window.location.pathname;
 
-        const newReq = req.clone({ url: newUrl, withCredentials: true, setHeaders:{path: path} });
+        const newReq = req.clone({ url: newUrl, withCredentials: true });
         return next.handle(newReq).pipe(
             filter(event => event instanceof HttpResponse),
             tap((event: HttpResponse<any>) => {
