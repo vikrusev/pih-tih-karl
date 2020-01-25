@@ -6,6 +6,7 @@
     "ng": "cd frontend && npm run ng",
     "start": "cd frontend && npm run start",
     "build": "cd frontend && npm run build",
+    "prod": "cd frontend && npm run prod",
     "test": "cd backend && npm test"
   }
 }
