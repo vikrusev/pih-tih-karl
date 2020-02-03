@@ -4,10 +4,14 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
-    "express": "^4.17.1"
+    "@types/express": "^4.17.2",
+    "@types/mongoose": "^5.7.0",
+    "@types/node": "^13.7.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.8.11"
   },
   "devDependencies": {},
-  "scripts": { },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC"

@@ -8,8 +8,12 @@
             "type": "node",
             "request": "launch",
             "name": "Debug Node Remote",
-            "program": "${workspaceRoot}\\backend\\app.js",
-            "cwd": "${workspaceRoot}/backend",  
+            "program": "${workspaceRoot}/backend/app.ts",
+            "preLaunchTask": "ts-to-js",
+            "outFiles": [
+                "${workspaceFolder}/backend/public/**/*.js"
+            ],
+            "cwd": "${workspaceRoot}/backend",
             "protocol": "inspector",
             "skipFiles": [
                 "<node_internals>/**"
