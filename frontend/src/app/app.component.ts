@@ -13,6 +13,7 @@ export class AppComponent {
   constructor(private http: HttpClient) { }
 
   async testProxy() {
+    const test: BasicUserModel = null;
     this.http.get('/test-proxy', { responseType: 'text' }).subscribe(res => this.proxyResponse = res);
   }
 }

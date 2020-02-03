@@ -3,10 +3,7 @@ interface IUserModel extends Document {
     lastname: string
 }
 
-var schemaObject = {
-    name: { type: String },
-    lastname: String
-};
+var schemaObject: BasicUserModel = null;
 
 var UserSchema = new mongoose.Schema(schemaObject, {
     strict: false

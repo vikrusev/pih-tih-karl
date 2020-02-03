@@ -13,6 +13,7 @@
         "importHelpers": true,
         "target": "es2018",
         "typeRoots": [
+            "../common/@types",
             "node_modules/@types"
         ],
         "lib": [
@@ -21,9 +22,9 @@
         ]
     },
     "include": [
-        "**/*.ts"
+        "../**/*.ts"
     ],
     "exclude": [
-        "node_modules"
+        "../frontend/*"
     ]
 }
