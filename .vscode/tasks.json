@@ -6,7 +6,7 @@
         {
             "type": "typescript",
             "label": "ts-to-js",
-            "tsconfig": "backend/tsconfig.json",
+            "tsconfig": "backend",
             "problemMatcher": [
                 "$tsc"
             ],
