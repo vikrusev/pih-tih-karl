@@ -12,5 +12,5 @@ switch (process.env.NODE_ENV) {
         break;
 }
 
-const confModule = configFactory();
+const confModule = new configFactory();
 module.exports = confModule;

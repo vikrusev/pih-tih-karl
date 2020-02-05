@@ -1,17 +1,27 @@
-const mongoose = require('mongoose');
+import * as mongoose from 'mongoose'
 
-const mongoURL = 'mongodb+srv://viktorvr:k6GIGcraDxiPgAZs@pihtihkarl-3grbo.azure.mongodb.net/test?retryWrites=true&w=majority';
-const mongodb = mongoose.connect(mongoURL, {
-        server: {
-            auto_reconnect: true,
-            poolSize: 5,
-            socketOptions: {
-                keepAlive: 1,
-                connectTimeoutMS: 30000
-            },
-            reconnectInterval: 20000,
-            reconnectTries: 100
-        }
-    }, (err) => { console.log("DB OK", err); });
+@Injectable()
+class ConfigModuleDev {
 
-module.exports = { mongoose };
+    mongodb = null;
+    mongoURLDev = 'mongodb+srv://viktorvr:1t5HqATyTC7XZ0mc@pihtihkarl-3grbo.azure.mongodb.net/test?retryWrites=true&w=majority';
+    mongoose = mongoose;
+
+    constructor() {
+        this.mongodb = () => this.mongoose.connect(this.mongoURLDev, {
+            server: {
+                auto_reconnect: true,
+                poolSize: 5,
+                socketOptions: {
+                    keepAlive: 1,
+                    connectTimeoutMS: 30000
+                },
+                reconnectInterval: 20000,
+                reconnectTries: 100
+            }
+        }, (err) => { console.log("DB OK", err); });
+    }
+
+}
+
+module.exports = ConfigModuleDev;
