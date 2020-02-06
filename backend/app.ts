@@ -4,7 +4,6 @@ import config from './config'
 
 import UserModel from './schemas/user'
 
-// TO-DO: create error handlers 
 export default class App {
 
     private config: Config = null;
@@ -16,6 +15,7 @@ export default class App {
     }
 
     start(): void {
+        this.setProcessEvents();
         this.useMiddlewares();
         this.useRoutes();
 
@@ -37,10 +37,20 @@ export default class App {
         this.startServer();
     }
 
+    private setProcessEvents(): void {
+        process.on('uncaughtException', err => {
+            console.error('error', `Caught unhandled exception: ${err.message} > Stack: ${err.stack}`);
+        })
+        .on('unhandledRejection', (reason: Error, p) => {
+            console.error('error', `Unhandled Rejection at: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
+        });
+    }
+
     private useMiddlewares(): void {
-        this.app.use(express.json());
-        this.app.use(express.urlencoded({ extended: false }))
-        this.app.use(express.static(path.join(__dirname)));
+        this.app
+            .use(express.json())
+            .use(express.urlencoded({ extended: false }))
+            .use(express.static(path.join(__dirname)));
     }
 
     // TO-DO: move routes to .route files

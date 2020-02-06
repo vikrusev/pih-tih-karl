@@ -8,6 +8,11 @@ export default class ConfigModuleProd {
     port: number | string = 3000;
 
     constructor() {
+        this.establishConnection();
+        this.setConnectionEvents();
+    }
+
+    private establishConnection(): void {
         this.mongodb = this.mongoose.connect(this.mongoURL, {
             server: {
                 auto_reconnect: true,
@@ -16,12 +21,10 @@ export default class ConfigModuleProd {
                     keepAlive: 1,
                     connectTimeoutMS: 30000
                 },
-                reconnectInterval: 20000,
+                reconnectInterval: 15000,
                 reconnectTries: 100
             }
-        }, (err) => { console.log("DB OK", err); });
-
-        this.setConnectionEvents();
+        })
     }
 
     // TO-DO: log errors to a .log file
@@ -41,20 +44,15 @@ export default class ConfigModuleProd {
         });
     
         this.mongoose.connection.on('disconnected', () => {
-            console.error("error", 'db: mongodb is disconnected!!!');
+            console.error("error", 'db: mongodb has disconnected!!!');
+        });
+
+        this.mongoose.connection.on('close', () => {
+            console.log("info", 'db: mongodb connection closed');
         });
     
         this.mongoose.connection.on('timeout', e => {
             console.error("error", "db: mongodb timeout " + e);
-            this.mongoose.connect(this.mongoURL, {
-                server: {
-                    auto_reconnect: true
-                }
-            });
-        });
-    
-        this.mongoose.connection.on('close', () => {
-            console.error("error", 'db: mongodb connection closed');
             this.mongoose.connect(this.mongoURL, {
                 server: {
                     auto_reconnect: true
