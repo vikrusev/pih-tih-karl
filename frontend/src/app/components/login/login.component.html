@@ -1,16 +1,13 @@
 <div class="showform">
-  <mat-form-field>
-    <input matInput placeholder="Username" [(ngModel)]='username'>
-  </mat-form-field>
-  <mat-form-field>
-    <input type='password' matInput placeholder="Password" [(ngModel)]='password'>
-  </mat-form-field>
-  <button
-  mat-stroked-button color="accent" (click)="onLogin()">Login</button>
+    <mat-form-field>
+        <input matInput placeholder="Username" [(ngModel)]='username'>
+    </mat-form-field>
+    <mat-form-field>
+        <input type='password' matInput placeholder="Password" [(ngModel)]='password'>
+    </mat-form-field>
+    <button mat-stroked-button color="accent" (click)="onLogin()">Login</button>
 </div>
 <div class="infobox">
-  <p>no accout?</p>
-  <button
-  mat-button color="warn"
-  routerLink="/register">register</button>
+    <p>no account?</p>
+    <button mat-button color="warn" routerLink="/register">register</button>
 </div>
