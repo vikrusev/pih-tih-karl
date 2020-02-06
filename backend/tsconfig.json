@@ -15,7 +15,7 @@
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "typeRoots": [
-            "./typings",
+            "./globals/typings",
             "../common/@types",
             "node_modules/@types"
         ],
