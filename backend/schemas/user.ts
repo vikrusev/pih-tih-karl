@@ -1,23 +1,28 @@
-let UserSchema = new mongoose.Schema({
-    email: { type: String, required: true, unique: true },
+import mongoose, { Schema, Model } from 'mongoose'
+
+const userSchema: Schema<IUserDocumentModel> = new mongoose.Schema({
+    username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     lastLogin: Date, // Date of last successful login
-    profile: String
+    profile: String,
+    firstName: String,
+    lastName: String
 }, {
-    strict: false
+    // strict: false // if you don't see a field saved in the DB check this option
 });
 
-UserSchema.pre("save", function (next) {
-    let now = new Date();
-    if (!this.createdAt) {
-      this.createdAt = now;
+userSchema.pre<IUserDocumentModel>('save', function (next): void {
+    if (!this.username) {
+        this.username = 'vikrusev';
     }
+
     next();
-  });
-  UserSchema.methods.fullName = function(): string {
+});
+
+userSchema.methods.fullName = function (): string {
     return (this.firstName.trim() + " " + this.lastName.trim());
-  };
+};
 
-var Model = mongoose.model('User', UserSchema);
+const UserModel: Model<IUserDocumentModel> = mongoose.model<IUserDocumentModel>('User', userSchema);
 
-module.exports = Model;
+export default UserModel;

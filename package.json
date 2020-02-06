@@ -8,5 +8,6 @@
     "build": "cd frontend && npm run build",
     "prod": "cd frontend && npm run prod",
     "test": "cd backend && npm test"
-  }
+  },
+  "private": true
 }
