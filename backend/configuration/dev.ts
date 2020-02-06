@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 export default class ConfigModuleDev {
 
     mongodb = null;
-    mongoURL: string = 'mongodb+srv://viktorvr:1t5HqATyTC7XZ0mc@pihtihkarl-3grbo.azure.mongodb.net/pihtihkarl?retryWrites=true&w=majority';
+    mongoURL: string = 'mongodb+srv://viktorvr:1t5HqATyTC7XZ0mc@pihtihkarl-3grbo.azure.mongodb.net/test?retryWrites=true&w=majority';
     mongoose = mongoose;
     port: number | string = 3000;
 
