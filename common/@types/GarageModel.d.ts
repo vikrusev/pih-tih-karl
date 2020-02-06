@@ -1,4 +1,4 @@
-interface GarageModel {
-    cars: CarModel[],
-    carItems: ItemModel[]
+interface IGarageModel {
+    cars: ICarModel[],
+    carItems: IItemModel[]
 }

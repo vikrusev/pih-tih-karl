@@ -1,42 +1,55 @@
-interface BasicUserModel {
-    email: String,
-    password: String,
-    lastLogin: Date, // Date of last successful login
-    profile: UserProfile
-}
+import { Document } from 'mongoose';
 
-interface UserWithHistories extends BasicUserModel {
-    passwordHistory: PasswordHistory[],
-    loginHistory: LoginHistory[],
-    raceHistory: RaceHistory[]
-}
+declare global {
+    interface IBasicUser {
+        username: String,
+        password: String,
+        lastLogin: Date, // Date of last successful login
+        profile: IUserProfile,
+        firstName: String,
+        lastName: String
+    }
 
-interface UserProfile {
-    /* Visible username of the player */
-    username: String,
-    firstName?: String,
-    lastName?: String,
-    birthDate?: Date
-}
+    interface IUserWithHistories extends IBasicUser {
+        passwordHistory: IPasswordHistory[],
+        loginHistory: ILoginHistory[],
+        raceHistory: IRaceHistory[]
+    }
 
-interface PasswordHistory {
-    password: String,
-    changeDate: Date
-}
+    interface IExtendedUser extends IUserWithHistories {
+        fullName(): string
+    }
 
-interface LoginHistory {
-    date: Date,
-    invalidLogins: Number // Used to block login attempts if needed
-}
+    interface IUserDocumentModel extends IExtendedUser, Document { }
 
-interface Oponent {
-    userId: String,
-    username: String
-}
+    interface IUserProfile {
+        /* Personal data of the player */
+        email: String,
+        firstName?: String,
+        lastName?: String,
+        birthDate?: Date,
+        visible?: Boolean // false by default
+    }
 
-interface RaceHistory {
-    oponent: Oponent,
-    date: Date
-    status: Boolean, // Wheather the battle is a win or loss
-    type: String // Type of race - attack, defence, bot attack
+    interface IPasswordHistory {
+        password: String,
+        changeDate: Date
+    }
+
+    interface ILoginHistory {
+        date: Date,
+        invalidLogins: Number // Used to block login attempts if needed
+    }
+
+    interface IOponent {
+        userId: String,
+        username: String
+    }
+
+    interface IRaceHistory {
+        oponent: IOponent,
+        date: Date
+        status: Boolean, // Wheather the battle is a win or loss
+        type: String // Type of race - attack, defence, bot attack
+    }
 }
