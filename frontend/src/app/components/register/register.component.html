@@ -1,0 +1,22 @@
+<div class="credentials">
+  <mat-form-field>
+    <input type="email" matInput placeholder="Email" [(ngModel)]="email">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="Username" [(ngModel)]="username">
+  </mat-form-field>
+  <mat-form-field>
+    <input type='password' matInput placeholder="Password" [(ngModel)]="password">
+  </mat-form-field>
+  <mat-form-field>
+    <input type='password' matInput placeholder="Confirm password" [(ngModel)]="confPassword">
+  </mat-form-field>
+  <button
+  mat-stroked-button color="primary">Register!</button>
+</div>
+<div class="infobox">
+  <p>already have an accout?</p>
+  <button
+  mat-button color="primary"
+  routerLink="/login">login!</button>
+</div>
