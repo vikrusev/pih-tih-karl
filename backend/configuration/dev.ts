@@ -27,16 +27,10 @@ export default class ConfigModuleDev {
 
     private establishConnection(): void {
         this.mongoose.connect(this.mongoURL, {
-            server: {
-                auto_reconnect: true,
-                poolSize: 5,
-                socketOptions: {
-                    keepAlive: 1,
-                    connectTimeoutMS: 30000
-                },
-                reconnectInterval: 15000,
-                reconnectTries: 100
-            }
+            poolSize: 5,
+            connectTimeoutMS: 30000,
+            useNewUrlParser: true,
+            useUnifiedTopology: true
         })
     }
 
