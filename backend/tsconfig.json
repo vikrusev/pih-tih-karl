@@ -28,6 +28,7 @@
         "../**/*.ts"
     ],
     "exclude": [
-        "../frontend/*"
+        "../frontend/*",
+        "**/*.log"
     ]
 }

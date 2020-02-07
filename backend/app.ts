@@ -1,8 +1,10 @@
 import express from 'express';
 import path from 'path';
 import config from './config'
+import { appLog } from './modules/helpers/logHelper'
 
 import UserModel from './schemas/user'
+import * as constants from './globals/constants'
 
 export default class App {
 
@@ -21,7 +23,7 @@ export default class App {
 
         // TO-DO: remove UserModel from this file
         const mockUser: IBasicUser = {
-            username: 'vikrusev1',
+            username: 'vikrusev7',
             password: 'Test123!',
             firstName: "Viktor",
             lastName: "Rusev",
@@ -30,8 +32,8 @@ export default class App {
         }
 
         UserModel.create(mockUser, function (err, user: IUserDocumentModel) {
-            console.log(user);
-            console.log(user.fullName());
+            appLog('info', user.toString());
+            appLog('info', user.fullName());
         });
 
         this.startServer();
@@ -39,10 +41,10 @@ export default class App {
 
     private setProcessEvents(): void {
         process.on('uncaughtException', err => {
-            console.error('error', `Caught unhandled exception: ${err.message} > Stack: ${err.stack}`);
+            appLog('error', `${constants.unhandledException}: ${err.message} > Stack: ${err.stack}`);
         })
         .on('unhandledRejection', (reason: Error, p) => {
-            console.error('error', `Unhandled Rejection at: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
+            appLog('error', `${constants.unhandledRejection}: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
         });
     }
 
@@ -67,7 +69,7 @@ export default class App {
     private startServer(): void {
         const port = process.env.PORT || this.config.port;
         this.app.listen(port, () => {
-            console.log(`Server listening on port: ${port}`);
+            appLog('info', `Server listening on port: ${port}`);
         });
     }
 
