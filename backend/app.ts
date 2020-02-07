@@ -3,7 +3,11 @@ import path from 'path';
 import config from './config'
 import { appLog } from './modules/helpers/logHelper'
 
+// constants
 import * as constants from './globals/constants'
+
+// routes
+import { sampleRouter } from './routes/sample'
 
 export default class App {
 
@@ -39,11 +43,8 @@ export default class App {
             .use(express.static(path.join(__dirname)));
     }
 
-    // TO-DO: move routes to .route files
     private useRoutes(): void {
-        this.app.get('/test-proxy', (req, res) => {
-            res.send('passed the proxy!');
-        })
+        this.app.use('/sample', sampleRouter)
         
         this.app.all('*', (req, res) => {
             res.sendFile(path.join(__dirname, 'angular-root.html'));
@@ -53,7 +54,8 @@ export default class App {
     private startServer(): void {
         const port = process.env.PORT || this.config.port;
         this.app.listen(port, () => {
-            appLog('info', `Server listening on port: ${port}`);
+            // a console.log is mandatory so to open the browser at the given port when the server has started running
+            console.log(`Server listening on port: ${port}`);
         });
     }
 
