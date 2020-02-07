@@ -3,7 +3,6 @@ import path from 'path';
 import config from './config'
 import { appLog } from './modules/helpers/logHelper'
 
-import UserModel from './schemas/user'
 import * as constants from './globals/constants'
 
 export default class App {
@@ -20,21 +19,6 @@ export default class App {
         this.setProcessEvents();
         this.useMiddlewares();
         this.useRoutes();
-
-        // TO-DO: remove UserModel from this file
-        const mockUser: IBasicUser = {
-            username: 'vikrusev7',
-            password: 'Test123!',
-            firstName: "Viktor",
-            lastName: "Rusev",
-            profile: null,
-            lastLogin: null
-        }
-
-        UserModel.create(mockUser, function (err, user: IUserDocumentModel) {
-            appLog('info', user.toString());
-            appLog('info', user.fullName());
-        });
 
         this.startServer();
     }
