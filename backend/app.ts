@@ -2,8 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import config from './config'
+import { appLog } from './modules/helpers/logHelper'
 
 import UserModel from './schemas/user'
+
+// constants
+import * as constants from './globals/constants'
+
+// routes
+import { sampleRouter } from './routes/sample'
 
 export default class App {
 
@@ -20,30 +27,15 @@ export default class App {
         this.useMiddlewares();
         this.useRoutes();
 
-        // TO-DO: remove UserModel from this file
-        const mockUser: IBasicUser = {
-            username: 'vikrusev1',
-            password: 'Test123!',
-            firstName: "Viktor",
-            lastName: "Rusev",
-            profile: null,
-            lastLogin: null
-        }
-
-        UserModel.create(mockUser, function (err, user: IUserDocumentModel) {
-            console.log(user);
-            console.log(user.fullName());
-        });
-
         this.startServer();
     }
 
     private setProcessEvents(): void {
         process.on('uncaughtException', err => {
-            console.error('error', `Caught unhandled exception: ${err.message} > Stack: ${err.stack}`);
+            appLog('error', `${constants.unhandledException}: ${err.message} > Stack: ${err.stack}`);
         })
             .on('unhandledRejection', (reason: Error, p) => {
-                console.error('error', `Unhandled Rejection at: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
+                appLog('error', `${constants.unhandledRejection}: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
             });
     }
 
@@ -55,7 +47,6 @@ export default class App {
             .use(express.static(path.join(__dirname)));
     }
 
-    // TO-DO: move routes to .route files
     private useRoutes(): void {
         this.app.get('/test-proxy', (req, res) => {
             res.send('passed the proxy!');
@@ -91,11 +82,22 @@ export default class App {
         this.app.all('*', (req, res) => {
             res.sendFile(path.join(__dirname, 'angular-root.html'));
         })
+
+        // TO-DO: make a better error handler
+        this.app.use((err, req, res, next) => {
+            if (err.message === 'Unauthorized') {
+                res.status(401).send('Unauthorized');
+                return;
+            }
+
+            res.status(500).send('Server error!');
+        })
     }
 
     private startServer(): void {
         const port = process.env.PORT || this.config.port;
         this.app.listen(port, () => {
+            // a console.log is mandatory so to open the browser at the given port when the server has started running
             console.log(`Server listening on port: ${port}`);
         });
     }

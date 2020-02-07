@@ -15,7 +15,7 @@
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "typeRoots": [
-            "./typings",
+            "./globals/typings",
             "../common/@types",
             "node_modules/@types"
         ],
@@ -28,6 +28,7 @@
         "../**/*.ts"
     ],
     "exclude": [
-        "../frontend/*"
+        "../frontend/*",
+        "**/*.log"
     ]
 }
