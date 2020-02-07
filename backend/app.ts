@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import path from 'path';
 import config from './config'
 
@@ -41,13 +42,14 @@ export default class App {
         process.on('uncaughtException', err => {
             console.error('error', `Caught unhandled exception: ${err.message} > Stack: ${err.stack}`);
         })
-        .on('unhandledRejection', (reason: Error, p) => {
-            console.error('error', `Unhandled Rejection at: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
-        });
+            .on('unhandledRejection', (reason: Error, p) => {
+                console.error('error', `Unhandled Rejection at: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
+            });
     }
 
     private useMiddlewares(): void {
         this.app
+            .use(cors())
             .use(express.json())
             .use(express.urlencoded({ extended: false }))
             .use(express.static(path.join(__dirname)));
@@ -58,7 +60,34 @@ export default class App {
         this.app.get('/test-proxy', (req, res) => {
             res.send('passed the proxy!');
         })
-        
+
+        this.app.get('/api/users', (req, res) => {
+            UserModel.find((err, users) => {
+                res.send(users);
+            });
+        })
+
+        this.app.post('/api/register', (req, res) => {
+            const username = req.body.username;
+            const password = req.body.password;
+            const email = req.body.email;
+            res.send(`${username} ${password} ${email}`);
+        })
+
+        this.app.post('/api/login', (req, res) => {
+            const username = req.body.username;
+            const password = req.body.password;
+            UserModel.findOne({ username, password }).exec((err, user) => {
+                if (user) {
+                    // res.send({ username, password });
+                    res.send({ m: "it exists!" });
+                } else {
+                    res.send({ m: "habibi" });
+                }
+            })
+
+        })
+
         this.app.all('*', (req, res) => {
             res.sendFile(path.join(__dirname, 'angular-root.html'));
         })
