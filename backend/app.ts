@@ -31,9 +31,9 @@ export default class App {
         process.on('uncaughtException', err => {
             appLog('error', `${constants.unhandledException}: ${err.message} > Stack: ${err.stack}`);
         })
-        .on('unhandledRejection', (reason: Error, p) => {
-            appLog('error', `${constants.unhandledRejection}: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
-        });
+            .on('unhandledRejection', (reason: Error, p) => {
+                appLog('error', `${constants.unhandledRejection}: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
+            });
     }
 
     private useMiddlewares(): void {
@@ -45,9 +45,19 @@ export default class App {
 
     private useRoutes(): void {
         this.app.use('/sample', sampleRouter)
-        
+
         this.app.all('*', (req, res) => {
             res.sendFile(path.join(__dirname, 'angular-root.html'));
+        })
+
+        // TO-DO: make a better error handler
+        this.app.use((err, req, res, next) => {
+            if (err.message === 'Unauthorized') {
+                res.status(401).send('Unauthorized');
+                return;
+            }
+
+            res.status(500).send('Server error!');
         })
     }
 
