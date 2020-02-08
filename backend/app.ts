@@ -6,6 +6,9 @@ import { appLog } from './modules/helpers/logHelper'
 
 import passport from 'passport'
 import { Strategy as localStrategy } from 'passport-local'
+import { ExtractJwt, Strategy as JWTstrategy } from 'passport-jwt'
+
+import * as jwt from 'jsonwebtoken'
 
 import UserModel from './schemas/user'
 
@@ -71,6 +74,22 @@ export default class App {
                 done(err);
             }
         }));
+
+        passport.use('jwt', new JWTstrategy({
+            secretOrKey: 'top_secret', // TODO: change this
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+        }, async (jwt_payload, done) => {
+            try {
+                const user = await UserModel.findById(jwt_payload._id);
+                if (user) {
+                    done(null, user);
+                } else {
+                    done(null, false);
+                }
+            } catch (error) {
+                done(error);
+            }
+        }));
     }
 
     private useRoutes(): void {
@@ -107,13 +126,29 @@ export default class App {
             passport.authenticate('login', (err, user, info) => {
                 if (err) { return next(err); }
 
-                if (!user) { return next(new Error('no user')); } //TODO: better errors
+                if (!user) { res.send("username or password is wrong"); } //TODO: better errors
 
                 req.login(user, { session: false }, async (err) => {
                     if (err) { return next(err); }
 
-                    res.send(user);
+                    const body = { _id: user._id, username: user.username };
+
+                    const token = jwt.sign({ user: body }, 'top_secret');
+
+                    res.status(200).send(token);
                 });
+            })(req, res, next);
+        })
+
+        this.app.get('/api/secure', (req, res, next) => {
+            passport.authenticate('jwt', { session: false }, (err, user, info) => {
+                if (err) {
+                    console.log(err);
+                } else if (info !== undefined) {
+                    res.send(info.message);
+                } else {
+                    res.send('success');
+                }
             })(req, res, next);
         })
 
