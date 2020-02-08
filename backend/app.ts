@@ -4,6 +4,9 @@ import path from 'path';
 import config from './config'
 import { appLog } from './modules/helpers/logHelper'
 
+import passport from 'passport'
+import { Strategy as localStrategy } from 'passport-local'
+
 import UserModel from './schemas/user'
 
 // constants
@@ -45,6 +48,29 @@ export default class App {
             .use(express.json())
             .use(express.urlencoded({ extended: false }))
             .use(express.static(path.join(__dirname)));
+
+        passport.use('login', new localStrategy({
+            usernameField: 'username',
+            passwordField: 'password'
+        }, async (username, password, done) => {
+            try {
+                const user = await UserModel.findOne({ username });
+
+                if (!user) {
+                    return done(null, false, { message: 'User not found' });
+                }
+
+                const validate = await user.isValidPassword(password);
+
+                if (!validate) {
+                    return done(null, false, { message: 'Wrong Password' });
+                }
+
+                return done(null, user, { message: 'Logged in Successfully' });
+            } catch (err) {
+                done(err);
+            }
+        }));
     }
 
     private useRoutes(): void {
@@ -62,21 +88,33 @@ export default class App {
             const username = req.body.username;
             const password = req.body.password;
             const email = req.body.email;
-            res.send(`${username} ${password} ${email}`);
-        })
 
-        this.app.post('/api/login', (req, res) => {
-            const username = req.body.username;
-            const password = req.body.password;
-            UserModel.findOne({ username, password }).exec((err, user) => {
-                if (user) {
-                    // res.send({ username, password });
-                    res.send({ m: "it exists!" });
+            if (!username || !password || !email) {
+                res.send('not enough information added');
+            }
+
+            UserModel.create({ email, username, password }, (err, newUser) => {
+                if (err) {
+                    // res.send('something went wrong'); //TODO: use error codes
+                    res.send(err.message);
                 } else {
-                    res.send({ m: "habibi" });
+                    res.send('Success!');
                 }
-            })
+            });
+        });
 
+        this.app.post('/api/login', (req, res, next) => {
+            passport.authenticate('login', (err, user, info) => {
+                if (err) { return next(err); }
+
+                if (!user) { return next(new Error('no user')); } //TODO: better errors
+
+                req.login(user, { session: false }, async (err) => {
+                    if (err) { return next(err); }
+
+                    res.send(user);
+                });
+            })(req, res, next);
         })
 
         this.app.all('*', (req, res) => {

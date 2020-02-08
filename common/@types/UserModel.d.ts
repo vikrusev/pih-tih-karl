@@ -17,7 +17,8 @@ declare global {
     }
 
     interface IExtendedUser extends IUserWithHistories {
-        fullName(): string
+        fullName(): string,
+        isValidPassword(string): Promise<boolean>
     }
 
     interface IUserDocumentModel extends IExtendedUser, Document { }
