@@ -126,7 +126,7 @@ export default class App {
             passport.authenticate('login', (err, user, info) => {
                 if (err) { return next(err); }
 
-                if (!user) { res.status(400).send({ error: "username or password is wrong" }); } //TODO: better errors
+                if (!user) { res.send({ error: "username or password is wrong" }); } //TODO: better errors
 
                 req.login(user, { session: false }, async (err) => {
                     if (err) { return next(err); }
