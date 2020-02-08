@@ -40,14 +40,14 @@ export default class App {
         this.app
             .use(express.json())
             .use(express.urlencoded({ extended: false }))
-            .use(express.static(path.join(__dirname)));
+            .use(express.static(path.join(this.config.app_root)));
     }
 
     private useRoutes(): void {
         this.app.use('/sample', sampleRouter)
 
         this.app.all('*', (req, res) => {
-            res.sendFile(path.join(__dirname, 'angular-root.html'));
+            res.sendFile(path.join(this.config.app_root, 'angular-root.html'));
         })
 
         // TO-DO: make a better error handler
