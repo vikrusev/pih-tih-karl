@@ -2,14 +2,13 @@
 import express from 'express'
 import { createServer, Server } from 'http'
 
-const io = require('socket.io')
-
 // additional modules
 import path from 'path'
 
 // helpers
 import config from './config'
 import { appLog } from './modules/helpers/logHelper'
+import SocketService  from './modules/helpers/socketService'
 
 // constants
 import * as constants from './globals/constants'
@@ -21,7 +20,7 @@ export default class App {
 
     private expressApp: express.Application = express();
     private server: Server = createServer(this.expressApp);
-    private socketIO = io(this.server);
+    private socketService = new SocketService();
 
     private config: Config = config;
 
@@ -31,7 +30,7 @@ export default class App {
         this.setProcessEvents();
         this.useMiddlewares();
         this.useRoutes();
-        this.setupSocketIO();
+        this.setupSocketService();
 
         this.startServer();
     }
@@ -70,16 +69,9 @@ export default class App {
         })
     }
 
-    private setupSocketIO(): void {
-        this.socketIO.on('connection', function (client) {
-            console.log('Client connected...');
-
-            client.on('join', function (data) {
-                console.log(data);
-                client.emit('messages', 'Hello from server');
-            });
-
-        });
+    private setupSocketService(): void {
+        this.socketService.init(this.server);
+        this.socketService.start();
     }
 
     private startServer(): void {

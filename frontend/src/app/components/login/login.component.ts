@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from "@angular/router"
 
-import * as io from 'socket.io-client'
+import { UserSocketService } from '../../services/user-socket.service';
 
 @Component({
     selector: 'app-login',
@@ -10,22 +11,16 @@ import * as io from 'socket.io-client'
 export class LoginComponent implements OnInit {
     username: String;
     password: String;
-
-    constructor() { }
+    
+    constructor(private router: Router, private userSocketService: UserSocketService) { }
 
     ngOnInit() {
     }
 
     onLogin() {
-        const socket = io('http://localhost:3000');
-
-        socket.on('connect', (data) => {
-            socket.emit('join', 'Hello World from client');
-        });
-
-        socket.on('messages', (data) => {
-            alert(data);
-        });
+        sessionStorage.setItem('isLogged', 'true');
+        this.userSocketService.createSocket();
+        this.router.navigateByUrl('/')
     }
 
 }

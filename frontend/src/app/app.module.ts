@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 
 import { UrlInterceptor } from './interceptors/url.interceptor';
+import { UserSocketService } from './services/user-socket.service';
 
 import { MainLayout } from './components/layout/main.layout';
 import { NavbarLayout } from './components/layout/navbar/navbar.layout';
@@ -51,7 +52,8 @@ import { GameComponent } from './components/game/game.component';
             provide: HTTP_INTERCEPTORS,
             useClass: UrlInterceptor,
             multi: true
-        }
+        },
+        UserSocketService
     ],
     bootstrap: [AppComponent]
 })
