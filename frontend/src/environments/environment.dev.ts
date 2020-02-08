@@ -1,6 +1,7 @@
 export const environment = {
     production: false,
-    apiUrl: "",
-    envName: "dev"
+    apiUrl: '',
+    envName: 'dev',
+    backendUrl: 'http://localhost:3000'
   };
   
