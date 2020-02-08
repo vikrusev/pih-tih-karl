@@ -99,7 +99,7 @@ export default class App {
 
         this.app.get('/api/users', (req, res) => {
             UserModel.find((err, users) => {
-                res.send(users);
+                res.send({ users });
             });
         })
 
@@ -109,15 +109,15 @@ export default class App {
             const email = req.body.email;
 
             if (!username || !password || !email) {
-                res.send('not enough information added');
+                res.status(400).send({ error: 'not enough information added' });
             }
 
             UserModel.create({ email, username, password }, (err, newUser) => {
                 if (err) {
                     // res.send('something went wrong'); //TODO: use error codes
-                    res.send(err.message);
+                    res.status(400).send({ error: err.message });
                 } else {
-                    res.send('Success!');
+                    res.status(200).send({ message: 'Success!' });
                 }
             });
         });
@@ -126,7 +126,7 @@ export default class App {
             passport.authenticate('login', (err, user, info) => {
                 if (err) { return next(err); }
 
-                if (!user) { res.send("username or password is wrong"); } //TODO: better errors
+                if (!user) { res.status(400).send({ error: "username or password is wrong" }); } //TODO: better errors
 
                 req.login(user, { session: false }, async (err) => {
                     if (err) { return next(err); }
@@ -135,7 +135,7 @@ export default class App {
 
                     const token = jwt.sign({ user: body }, 'top_secret', { expiresIn: '12h' });
 
-                    res.status(200).send(token);
+                    res.status(200).send({ token });
                 });
             })(req, res, next);
         })
@@ -143,11 +143,11 @@ export default class App {
         this.app.get('/api/secure', (req, res, next) => {
             passport.authenticate('jwt', { session: false }, (err, user, info) => {
                 if (err) {
-                    res.send(`Error occured ${err.message}`);
+                    res.status(400).send({ error: `Error occured ${err.message}` });
                 } else if (info !== undefined) {
-                    res.send(info.message);
+                    res.status(400).send({ error: info.message });
                 } else {
-                    res.send('success');
+                    res.status(200).send({ message: 'success' });
                 }
             })(req, res, next);
         })
