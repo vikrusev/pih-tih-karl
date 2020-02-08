@@ -133,7 +133,7 @@ export default class App {
 
                     const body = { _id: user._id, username: user.username };
 
-                    const token = jwt.sign({ user: body }, 'top_secret');
+                    const token = jwt.sign({ user: body }, 'top_secret', { expiresIn: '12h' });
 
                     res.status(200).send(token);
                 });
@@ -143,7 +143,7 @@ export default class App {
         this.app.get('/api/secure', (req, res, next) => {
             passport.authenticate('jwt', { session: false }, (err, user, info) => {
                 if (err) {
-                    console.log(err);
+                    res.send(`Error occured ${err.message}`);
                 } else if (info !== undefined) {
                     res.send(info.message);
                 } else {
