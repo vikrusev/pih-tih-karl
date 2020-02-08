@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from "@angular/router"
+
+import { UserSocketService } from '../../services/user-socket.service';
 
 @Component({
     selector: 'app-login',
@@ -8,13 +11,16 @@ import { Component, OnInit } from '@angular/core';
 export class LoginComponent implements OnInit {
     username: String;
     password: String;
-
-    constructor() { }
+    
+    constructor(private router: Router, private userSocketService: UserSocketService) { }
 
     ngOnInit() {
     }
 
     onLogin() {
+        sessionStorage.setItem('isLogged', 'true');
+        this.userSocketService.createSocket();
+        this.router.navigateByUrl('/')
     }
 
 }
