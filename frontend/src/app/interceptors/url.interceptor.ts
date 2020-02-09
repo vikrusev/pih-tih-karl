@@ -11,9 +11,14 @@ export class UrlInterceptor implements HttpInterceptor {
     constructor() { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        // TODO: figure out this :D
         const newUrl = environment.apiUrl + req.urlWithParams;
+        // const newUrl = req.urlWithParams;
 
-        const newReq = req.clone({ url: newUrl, withCredentials: true });
+
+        // WHY with credentials ???
+        // this fucks CORS !!!
+        const newReq = req.clone({ url: newUrl, withCredentials: false });
         return next.handle(newReq).pipe(
             filter(event => event instanceof HttpResponse),
             tap((event: HttpResponse<any>) => {
