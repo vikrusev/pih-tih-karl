@@ -17,6 +17,16 @@ export class RaceComponent implements OnInit {
 
     async ngOnInit() {
         this.onlineUsers = await this.prepareTableTable();
+        this.onlineUsers.filterPredicate = this.filterPredicate;
+    }
+    
+    applyFilter(event: Event) {
+        const filterValue = (event.target as HTMLInputElement).value;
+        this.onlineUsers.filter = filterValue.trim().toLowerCase();
+    }
+    
+    private filterPredicate(user: IBasicUser, filterValue: string): Boolean {
+        return user.username.includes(filterValue) || user.email.includes(filterValue);
     }
 
     private async prepareTableTable(): Promise<MatTableDataSource<IBasicUser>> {

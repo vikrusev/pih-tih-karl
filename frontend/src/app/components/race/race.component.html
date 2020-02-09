@@ -1,4 +1,9 @@
 <div class="app-race">
+    <mat-form-field>
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Filter by username or email...">
+    </mat-form-field>
+    
     <table mat-table [dataSource]="onlineUsers" class="main-mat-table">
         <ng-container matColumnDef="email">
             <th mat-header-cell *matHeaderCellDef> Email </th>
