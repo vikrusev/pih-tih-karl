@@ -98,9 +98,6 @@ export default class App {
                 done(error);
             }
         }));
-    }
-
-    private useRoutes(): void {
 
         this.expressApp.get('/api/users', (req, res) => {
             UserModel.find((err, users) => {

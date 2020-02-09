@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
       
         sessionStorage.setItem('isLogged', 'true');
         this.userSocketService.createSocket();
-        this.router.navigateByUrl('/')
+        // this.router.navigateByUrl('/')
     }
 
 }
