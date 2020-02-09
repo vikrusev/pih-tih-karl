@@ -135,7 +135,13 @@ export default class App {
 
                     const token = jwt.sign({ user: body }, 'top_secret', { expiresIn: '12h' });
 
-                    res.status(200).send({ token });
+                    res.status(200).send({
+                        token, user:
+                        {
+                            username: user.username,
+                            id: user._id
+                        }
+                    });
                 });
             })(req, res, next);
         })
