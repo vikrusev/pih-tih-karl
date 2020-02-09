@@ -23,4 +23,8 @@ export class AuthService {
                 console.log(err);
             });
     }
+
+    isLogged(): Boolean {
+        return sessionStorage.getItem('isLogged') && this.userSocketService.getCurrentSocket();
+    }
 }

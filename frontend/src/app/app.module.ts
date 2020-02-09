@@ -17,6 +17,8 @@ import { FormsModule } from '@angular/forms';
 import { UrlInterceptor } from './interceptors/url.interceptor';
 import { UserSocketService } from './services/user-socket.service';
 
+import { LoggedUserGuard } from './guards/logged-user.guard';
+
 import { MainLayout } from './components/layout/main.layout';
 import { NavbarLayout } from './components/layout/navbar/navbar.layout';
 
@@ -24,6 +26,7 @@ import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { GameComponent } from './components/game/game.component';
+import { RaceComponent } from './components/race/race.component';
 
 @NgModule({
     declarations: [
@@ -34,6 +37,7 @@ import { GameComponent } from './components/game/game.component';
         LoginComponent,
         RegisterComponent,
         GameComponent,
+        RaceComponent
     ],
     imports: [
         BrowserModule,
@@ -53,7 +57,8 @@ import { GameComponent } from './components/game/game.component';
             useClass: UrlInterceptor,
             multi: true
         },
-        UserSocketService
+        UserSocketService,
+        LoggedUserGuard
     ],
     bootstrap: [AppComponent]
 })
