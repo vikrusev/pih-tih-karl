@@ -25,13 +25,12 @@ import * as constants from './globals/constants'
 // routes
 import { sampleRouter } from './routes/sample.router'
 import { usersRouter } from './routes/users.router'
+import { mainRouter } from './routes/main.router'
 
 export default class App {
 
     private expressApp: express.Application = express();
     private server: Server = createServer(this.expressApp);
-
-    private config: Config = config;
 
     constructor() { }
 
@@ -48,9 +47,9 @@ export default class App {
         process.on('uncaughtException', err => {
             appLog('error', `${constants.unhandledException}: ${err.message} > Stack: ${err.stack}`);
         })
-        .on('unhandledRejection', (reason: Error, p) => {
-            appLog('error', `${constants.unhandledRejection}: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
-        });
+            .on('unhandledRejection', (reason: Error, p) => {
+                appLog('error', `${constants.unhandledRejection}: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
+            });
     }
 
     private useMiddlewares(): void {
@@ -58,7 +57,7 @@ export default class App {
             .use(cors())
             .use(express.json())
             .use(express.urlencoded({ extended: false }))
-            .use(express.static(path.join(this.config.app_root)));
+            .use(express.static(path.join(config.app_root)));
 
         passport.use('login', new localStrategy({
             usernameField: 'username',
@@ -159,11 +158,7 @@ export default class App {
 
         this.expressApp.use('/sample', sampleRouter);
         this.expressApp.use('/users', usersRouter);
-
-
-        this.expressApp.all('*', (req, res) => {
-            res.sendFile(path.join(this.config.app_root, 'angular-root.html'));
-        })
+        this.expressApp.use('/', mainRouter);
 
         // TO-DO: make a better error handler
         this.expressApp.use((err, req, res, next) => {
@@ -182,7 +177,7 @@ export default class App {
     }
 
     private startServer(): void {
-        const port = process.env.PORT || this.config.port;
+        const port = process.env.PORT || config.port;
         this.server.listen(port, () => {
             // a console.log is mandatory so to open the browser at the given port when the server has started running
             console.log(`Server listening on port: ${port}`);
