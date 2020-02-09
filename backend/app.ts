@@ -9,7 +9,7 @@ import path from 'path'
 // helpers
 import config from './config'
 import { appLog } from './modules/helpers/logHelper'
-import SocketService from './modules/helpers/socketService'
+import { socketModule } from './modules/helpers/socketModule'
 
 import passport from 'passport'
 import { Strategy as localStrategy } from 'passport-local'
@@ -30,7 +30,6 @@ export default class App {
 
     private expressApp: express.Application = express();
     private server: Server = createServer(this.expressApp);
-    private socketService = new SocketService();
 
     private config: Config = config;
 
@@ -40,7 +39,7 @@ export default class App {
         this.setProcessEvents();
         this.useMiddlewares();
         this.useRoutes();
-        this.setupSocketService();
+        this.setupSocketIOServer();
 
         this.startServer();
     }
@@ -158,8 +157,8 @@ export default class App {
             })(req, res, next);
         })
 
-        this.expressApp.use('/sample', sampleRouter)
-        this.expressApp.use('/users', usersRouter)
+        this.expressApp.use('/sample', sampleRouter);
+        this.expressApp.use('/users', usersRouter);
 
 
         this.expressApp.all('*', (req, res) => {
@@ -177,9 +176,9 @@ export default class App {
         })
     }
 
-    private setupSocketService(): void {
-        this.socketService.init(this.server);
-        this.socketService.start();
+    private setupSocketIOServer(): void {
+        socketModule.socketIOInit(this.server);
+        socketModule.socketIOStart();
     }
 
     private startServer(): void {
