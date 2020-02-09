@@ -1,0 +1,32 @@
+$xs-padding: 30px;
+$s-padding: 50px;
+$m-padding: 70px;
+$l-padding: 100px;
+
+$min-container-width: 330px;
+
+@mixin base-padding() {
+    /* Medium devices (landscape tablets, 768px and up) */
+    @media only screen and (min-width: 768px) {
+        padding: 0 $s-padding;
+        min-width: calc(330px - 2*$small-padding);
+    }
+
+    /* Large devices (laptops/desktops, 992px and up) */
+    @media only screen and (min-width: 992px) {
+        padding: 0 $m-padding;
+        min-width: calc(330px - 2*$medium-padding);
+    }
+
+    /* Extra Large devices (laptops/desktops, 1200px and up) */
+    @media only screen and (min-width: 1200px) {
+        padding: 0 $l-padding;
+        min-width: calc(330px - 2*#{$l-padding});
+    }
+}
+
+.main-layout {
+    @include base-padding;
+    padding: 0 $xs-padding;
+    min-width: calc(330px - 2*#{$xs-padding});
+}
