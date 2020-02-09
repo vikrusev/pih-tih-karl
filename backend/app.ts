@@ -156,9 +156,7 @@ export default class App {
                 }
             })(req, res, next);
         })
-    }
 
-    private useRoutes(): void {
         this.expressApp.use('/sample', sampleRouter)
 
 
