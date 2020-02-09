@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { UserSocketService } from '../../services/user-socket.service';
+import { Router } from '@angular/router'
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-register',
@@ -13,15 +14,14 @@ export class RegisterComponent implements OnInit {
     password: String;
     confPassword: String;
 
-    constructor(private userSocketService: UserSocketService) { 
-        const socket = this.userSocketService.getCurrentSocket();
-
-        socket.emit('join', 'Hello from client');
-
-        userSocketService.disconnectSocket();
+    constructor(private http: HttpClient, private router: Router) {
     }
 
     ngOnInit() {
+    }
+
+    register() {
+        this.http.post('/api/register', { username: this.username, password: this.password, email: this.email }).subscribe(res => { console.log(res); this.router.navigateByUrl('/login') });
     }
 
 }
