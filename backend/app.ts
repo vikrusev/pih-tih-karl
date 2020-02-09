@@ -138,8 +138,13 @@ export default class App {
                     const body = { _id: user._id, username: user.username };
 
                     const token = jwt.sign({ user: body }, 'top_secret', { expiresIn: '12h' });
+                    const userData = {
+                        email: user.email,
+                        username: user.username,
+                        isLogged: true
+                    };
 
-                    res.status(200).send({ token });
+                    res.status(200).send({ userData, token });
                 });
             })(req, res, next);
         })
