@@ -7,15 +7,18 @@ import { AppComponent } from './app.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule } from '@angular/forms';
+
 import { MatSliderModule } from '@angular/material/slider';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
+import { MatTableModule } from '@angular/material/table';
 
 import { UrlInterceptor } from './interceptors/url.interceptor';
 import { UserSocketService } from './services/user-socket.service';
+import { UsersService } from './services/users.service';
 
 import { LoggedUserGuard } from './guards/logged-user.guard';
 
@@ -50,6 +53,7 @@ import { RaceComponent } from './components/race/race.component';
         MatButtonModule,
         MatFormFieldModule,
         MatInputModule,
+        MatTableModule
     ],
     providers: [
         {
@@ -58,6 +62,7 @@ import { RaceComponent } from './components/race/race.component';
             multi: true
         },
         UserSocketService,
+        UsersService,
         LoggedUserGuard
     ],
     bootstrap: [AppComponent]

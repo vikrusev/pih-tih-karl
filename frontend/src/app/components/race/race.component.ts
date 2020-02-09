@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+
+import { UsersService } from '../../services/users.service';
 
 @Component({
     selector: 'app-race',
@@ -7,9 +10,28 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RaceComponent implements OnInit {
 
-    constructor() { }
+    onlineUsers: any = null;
+    displayedColumns: string[] = ['username', 'email'];
 
-    ngOnInit() {
+    constructor(private usersService: UsersService) { }
+
+    async ngOnInit() {
+        this.onlineUsers = await this.prepareTableTable();
+    }
+
+    private async prepareTableTable(): Promise<MatTableDataSource<IBasicUser>> {
+        try {
+            let dataSource: IBasicUser[] = await this.usersService.getAllOnlineUsers();
+
+            const currentUser = this.usersService.getCurrentUser();
+            dataSource = dataSource.filter((user: IBasicUser) => user.username !== currentUser.username);
+
+            return new MatTableDataSource(dataSource);
+        }
+        catch (e) {
+            console.log(e);
+            return null;
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 const io = require('socket.io');
 
 import { appLog } from './logHelper'
+import UserModel from '../../schemas/user';
 
 const socketModule = (() => {
 
@@ -14,8 +15,22 @@ const socketModule = (() => {
         awaitEvents();
     }
 
-    const getAllOnlineUsers = (): IBasicUser[] => {
+    const getAllActiveSockets = (): any[] => {
         return socketIO.sockets.sockets;
+    }
+
+    const getAllActiveUsers = async (): Promise<IBasicUser[]> => {
+        const allActiveSockets = getAllActiveSockets();
+
+        let users: IBasicUser[] = [];
+        for (const socket in allActiveSockets) {
+            const username = allActiveSockets[socket].request._query['username'];
+         
+            const user = await UserModel.findOne({ username: username }).lean();
+            users.push(user);
+        }
+
+        return users;
     }
 
     const awaitEvents = (): void => {
@@ -37,7 +52,8 @@ const socketModule = (() => {
         socketIO,
         socketIOInit,
         socketIOStart,
-        getAllOnlineUsers
+        getAllActiveUsers,
+        getAllActiveSockets
     }
 })()
 

@@ -2,23 +2,24 @@ import { Injectable } from "@angular/core";
 
 import * as io from 'socket.io-client'
 import { environment } from '../../environments/environment'
+import { UsersService } from './users.service'
 
 @Injectable()
 export class UserSocketService {
 
     static socket = null;
 
-    constructor() { }
+    constructor(private usersService: UsersService) { }
 
     createSocket() {
-        const isUserLogged = sessionStorage.getItem('isLogged');
+        const hasLogged = this.usersService.hasLogged();
 
-        if (isUserLogged && !UserSocketService.socket) {
+        if (hasLogged && !UserSocketService.socket) {
             this.setSocket();
             
             UserSocketService.socket.on('disconnect', () => {
                 UserSocketService.socket = UserSocketService.socket.close();
-                sessionStorage.removeItem('isLogged');
+                this.usersService.removeItem('isLogged');
             });
         }
     }
@@ -28,7 +29,8 @@ export class UserSocketService {
     }
 
     setSocket() {
-        UserSocketService.socket = io(environment.backendUrl);
+        const currentUser = this.usersService.getCurrentUser();
+        UserSocketService.socket = io(environment.backendUrl, { query: `username=${currentUser.username}` });
     }
 
     disconnectSocket() {
