@@ -28,6 +28,20 @@ userSchema.pre<IUserDocumentModel>('save', async function (next): Promise<void> 
     next();
 });
 
+const processFindQuery = (users) => {
+    if (users) {
+        if (!Array.isArray(users)) {
+            users = [ users ];
+        }
+        users.forEach((user) => {
+            delete user.password;
+        });
+    }
+}
+
+userSchema.post<IUserDocumentModel>('find', processFindQuery);
+userSchema.post<IUserDocumentModel>('findOne', processFindQuery);
+
 userSchema.methods.isValidPassword = async function (password: string): Promise<boolean> {
     const compare = await bcrypt.compare(password, this.password);
     return compare;
