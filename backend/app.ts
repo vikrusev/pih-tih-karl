@@ -1,8 +1,15 @@
+// server-related modules
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
+import { createServer, Server } from 'http'
+
+// additional modules
+import path from 'path'
+
+// helpers
 import config from './config'
 import { appLog } from './modules/helpers/logHelper'
+import SocketService  from './modules/helpers/socketService'
 
 import passport from 'passport'
 import { Strategy as localStrategy } from 'passport-local'
@@ -20,18 +27,19 @@ import { sampleRouter } from './routes/sample'
 
 export default class App {
 
-    private config: Config = null;
-    private app: express.Application = null;
+    private expressApp: express.Application = express();
+    private server: Server = createServer(this.expressApp);
+    private socketService = new SocketService();
 
-    constructor() {
-        this.app = express();
-        this.config = config;
-    }
+    private config: Config = config;
+
+    constructor() { }
 
     start(): void {
         this.setProcessEvents();
         this.useMiddlewares();
         this.useRoutes();
+        this.setupSocketService();
 
         this.startServer();
     }
@@ -40,17 +48,17 @@ export default class App {
         process.on('uncaughtException', err => {
             appLog('error', `${constants.unhandledException}: ${err.message} > Stack: ${err.stack}`);
         })
-            .on('unhandledRejection', (reason: Error, p) => {
-                appLog('error', `${constants.unhandledRejection}: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
-            });
+        .on('unhandledRejection', (reason: Error, p) => {
+            appLog('error', `${constants.unhandledRejection}: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
+        });
     }
 
     private useMiddlewares(): void {
-        this.app
+        this.expressApp
             .use(cors())
             .use(express.json())
             .use(express.urlencoded({ extended: false }))
-            .use(express.static(path.join(__dirname)));
+            .use(express.static(path.join(this.config.app_root)));
 
         passport.use('login', new localStrategy({
             usernameField: 'username',
@@ -93,17 +101,14 @@ export default class App {
     }
 
     private useRoutes(): void {
-        this.app.get('/test-proxy', (req, res) => {
-            res.send('passed the proxy!');
-        })
 
-        this.app.get('/api/users', (req, res) => {
+        this.expressApp.get('/api/users', (req, res) => {
             UserModel.find((err, users) => {
                 res.send({ users });
             });
         })
 
-        this.app.post('/api/register', (req, res) => {
+        this.expressApp.post('/api/register', (req, res) => {
             const username = req.body.username;
             const password = req.body.password;
             const email = req.body.email;
@@ -122,7 +127,7 @@ export default class App {
             });
         });
 
-        this.app.post('/api/login', (req, res, next) => {
+        this.expressApp.post('/api/login', (req, res, next) => {
             passport.authenticate('login', (err, user, info) => {
                 if (err) { return next(err); }
 
@@ -146,7 +151,7 @@ export default class App {
             })(req, res, next);
         })
 
-        this.app.get('/api/secure', (req, res, next) => {
+        this.expressApp.get('/api/secure', (req, res, next) => {
             passport.authenticate('jwt', { session: false }, (err, user, info) => {
                 if (err) {
                     res.status(400).send({ error: `Error occured ${err.message}` });
@@ -157,13 +162,18 @@ export default class App {
                 }
             })(req, res, next);
         })
+    }
 
-        this.app.all('*', (req, res) => {
-            res.sendFile(path.join(__dirname, 'angular-root.html'));
+    private useRoutes(): void {
+        this.expressApp.use('/sample', sampleRouter)
+
+
+        this.expressApp.all('*', (req, res) => {
+            res.sendFile(path.join(this.config.app_root, 'angular-root.html'));
         })
 
         // TO-DO: make a better error handler
-        this.app.use((err, req, res, next) => {
+        this.expressApp.use((err, req, res, next) => {
             if (err.message === 'Unauthorized') {
                 res.status(401).send('Unauthorized');
                 return;
@@ -173,9 +183,14 @@ export default class App {
         })
     }
 
+    private setupSocketService(): void {
+        this.socketService.init(this.server);
+        this.socketService.start();
+    }
+
     private startServer(): void {
         const port = process.env.PORT || this.config.port;
-        this.app.listen(port, () => {
+        this.server.listen(port, () => {
             // a console.log is mandatory so to open the browser at the given port when the server has started running
             console.log(`Server listening on port: ${port}`);
         });
