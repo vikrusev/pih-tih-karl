@@ -9,7 +9,7 @@ import path from 'path'
 // helpers
 import config from './config'
 import { appLog } from './modules/helpers/logHelper'
-import SocketService  from './modules/helpers/socketService'
+import SocketService from './modules/helpers/socketService'
 
 import passport from 'passport'
 import { Strategy as localStrategy } from 'passport-local'
@@ -23,7 +23,8 @@ import UserModel from './schemas/user'
 import * as constants from './globals/constants'
 
 // routes
-import { sampleRouter } from './routes/sample'
+import { sampleRouter } from './routes/sample.router'
+import { usersRouter } from './routes/users.router'
 
 export default class App {
 
@@ -158,6 +159,7 @@ export default class App {
         })
 
         this.expressApp.use('/sample', sampleRouter)
+        this.expressApp.use('/users', usersRouter)
 
 
         this.expressApp.all('*', (req, res) => {
