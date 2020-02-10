@@ -38,8 +38,10 @@ import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { GameComponent } from './components/game/game.component';
+import { ProfileComponent } from './components/profile/profile.component';
 import { RaceComponent } from './components/race/race.component';
 import { RaceMatTableComponent } from './components/race/race-mat-table/race-mat-table.component';
+
 
 @NgModule({
     declarations: [
@@ -50,6 +52,7 @@ import { RaceMatTableComponent } from './components/race/race-mat-table/race-mat
         LoginComponent,
         RegisterComponent,
         GameComponent,
+        ProfileComponent,
         RaceComponent,
         RaceMatTableComponent
     ],

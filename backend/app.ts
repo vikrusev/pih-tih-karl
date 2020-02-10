@@ -97,9 +97,6 @@ export default class App {
                 done(error);
             }
         }));
-    }
-
-    private useRoutes(): void {
 
         this.expressApp.get('/api/users', (req, res) => {
             UserModel.find((err, users) => {
@@ -138,13 +135,16 @@ export default class App {
                     const body = { _id: user._id, username: user.username };
 
                     const token = jwt.sign({ user: body }, 'top_secret', { expiresIn: '12h' });
-                    const userData = {
+                    const user = {
                         email: user.email,
                         username: user.username,
-                        isLogged: true
+                        id: user._id
                     };
 
-                    res.status(200).send({ userData, token });
+
+                    res.status(200).send({
+                        token, user
+                    });
                 });
             })(req, res, next);
         })
