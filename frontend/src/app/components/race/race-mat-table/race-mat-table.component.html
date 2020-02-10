@@ -3,6 +3,8 @@
     <input matInput (keyup)="applyFilter($event)" placeholder="Filter by username or email...">
 </mat-form-field>
 
+<button mat-raised-button (click)="refreshTable()"> Refresh Table </button>
+
 <div class="main">
     <table mat-table [dataSource]="onlineUsers" class="main-mat-table">
 

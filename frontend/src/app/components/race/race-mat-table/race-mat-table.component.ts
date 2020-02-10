@@ -25,20 +25,26 @@ export class RaceMatTableComponent implements OnInit {
     refresh: boolean = true;
     autoRefreshTableMS: number = 20000;
 
+    tableRefreshInterval = null;
+
     @ViewChild(MatPaginator) paginator: MatPaginator;
 
     constructor(private usersService: UsersService) { }
 
     ngOnInit() {
+        this.startTimers(1000);
+    }
+
+    private startTimers(timeout: number): void {
         setTimeout(async () => {
             await this.setData();
 
-            setInterval(async () => {
+            this.tableRefreshInterval = setInterval(async () => {
                 if (this.refresh) {
                     await this.setData()
                 }
             }, this.autoRefreshTableMS);
-        }, 1000);
+        }, timeout);
     }
 
     private async setData() {
@@ -62,6 +68,11 @@ export class RaceMatTableComponent implements OnInit {
         }
 
         this.onlineUsers.filter = filterValue.trim().toLowerCase();
+    }
+
+    refreshTable(): void {
+        clearInterval(this.tableRefreshInterval);
+        this.startTimers(200);
     }
 
     private async prepareTableData(): Promise<MatTableDataSource<ITableUser>> {

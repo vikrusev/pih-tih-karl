@@ -11,6 +11,19 @@ div.main {
     font-size: 14px;
 }
 
+.mat-header-cell {
+    text-transform: capitalize;
+}
+
+.mat-row:hover {
+    cursor: pointer;
+    background-color: #e6e6e6;
+}
+
+.mat-raised-button {
+    margin-bottom: 20px;
+}
+
 tr.mat-footer-row {
     font-weight: bold;
 }
