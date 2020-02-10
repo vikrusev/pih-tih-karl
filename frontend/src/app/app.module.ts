@@ -19,6 +19,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material';
 
 // Interceptors and services
 import { UrlInterceptor } from './interceptors/url.interceptor';
@@ -38,6 +39,7 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { GameComponent } from './components/game/game.component';
 import { RaceComponent } from './components/race/race.component';
+import { RaceMatTableComponent } from './components/race/race-mat-table/race-mat-table.component';
 
 @NgModule({
     declarations: [
@@ -48,7 +50,8 @@ import { RaceComponent } from './components/race/race.component';
         LoginComponent,
         RegisterComponent,
         GameComponent,
-        RaceComponent
+        RaceComponent,
+        RaceMatTableComponent
     ],
     imports: [
         SharedModule,
@@ -62,7 +65,8 @@ import { RaceComponent } from './components/race/race.component';
         MatButtonModule,
         MatFormFieldModule,
         MatInputModule,
-        MatTableModule
+        MatTableModule,
+        MatPaginatorModule
     ],
     providers: [
         {
