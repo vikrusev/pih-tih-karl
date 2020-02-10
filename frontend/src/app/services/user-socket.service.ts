@@ -4,37 +4,44 @@ import * as io from 'socket.io-client'
 import { environment } from '../../environments/environment'
 import { UsersService } from './users.service'
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class UserSocketService {
 
-    static socket = null;
+    socket = null;
 
     constructor(private usersService: UsersService) { }
 
-    createSocket() {
+    createSocket(): void {
         const hasLogged = this.usersService.hasLogged();
 
-        if (hasLogged && !UserSocketService.socket) {
+        if (hasLogged && !this.socket) {
             this.setSocket();
             
-            UserSocketService.socket.on('disconnect', () => {
-                UserSocketService.socket = UserSocketService.socket.close();
-                this.usersService.removeItem('isLogged');
+            this.socket.on('disconnect', () => {
+                this.socket = this.socket.close();
             });
         }
     }
 
     getCurrentSocket() {
-        return UserSocketService.socket;
+        return this.socket;
     }
 
     setSocket() {
-        const currentUser = this.usersService.getCurrentUser();
-        UserSocketService.socket = io(environment.backendUrl, { query: `username=${currentUser.username}` });
+        const currentUser: IBasicUser = this.usersService.getCurrentUser();
+
+        if (currentUser) {
+            this.socket = io(environment.backendUrl, { query: `username=${currentUser.username}` });
+        }
+        else {
+            console.log('no user');
+        }
     }
 
     disconnectSocket() {
-        UserSocketService.socket.emit('logout-disconnect');
+        this.socket.emit('logout-disconnect');
     }
 
 }

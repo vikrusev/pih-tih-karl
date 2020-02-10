@@ -7,7 +7,7 @@ export class UsersService {
 
     user$: Subject<IBasicUser> = new BehaviorSubject<IBasicUser>(null);
 
-    user;
+    user: IBasicUser = null;
 
     constructor(private http: HttpClient) { }
 
@@ -15,21 +15,17 @@ export class UsersService {
         return this.http.get<IBasicUser[]>('/users/online').toPromise();
     }
 
+    getCurrentUser(): IBasicUser {
+        return this.user;
+    }
+
     getCurrentUsername(): String {
-        return this.auth.getUsername();
+        return this.user ? this.user.username : null;
     }
 
-    setCurrentUser(userData): void {
-        const user = JSON.stringify(userData);
-        sessionStorage.setItem('user', user);
-    }
-
-    removeItem(itemKey): void {
-        sessionStorage.removeItem(itemKey)
-    }
-
-    login(user: any) {
-        throw new Error("Method not implemented.");
+    setCurrentUser(user: IBasicUser) {
+        this.user = user;
+        this.user$.next(this.user);
     }
 
     hasLogged(): Boolean {

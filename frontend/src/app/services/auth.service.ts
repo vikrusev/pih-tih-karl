@@ -1,40 +1,47 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-
-import { Subject, BehaviorSubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators'
+import { HttpClient } from '@angular/common/http';
 
 import { UserSocketService } from './user-socket.service';
 import { UsersService } from './users.service';
+
+import { tap } from 'rxjs/operators'
+
+interface Token {
+    exp: number,
+    user: IBasicUser
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    token: string;
+    token: string = null;
 
     constructor(
         private http: HttpClient, private router: Router,
         private userSocketService: UserSocketService,
-        private usersService: UsersService) {
-        const jwt = localStorage.getItem('JWT');
-        let jwtParsed;
+        private usersService: UsersService
+    ) {
+        const jwt: string = localStorage.getItem('JWT');
+        let jwtParsed: Token = null;
+
         if (jwt) {
             jwtParsed = this.parseJwt(jwt);
         }
 
+        const currentTime = (new Date).getTime() / 1000;
+
         if (jwtParsed
             && jwtParsed.exp
             && jwtParsed.user
-            && (new Date).getTime() / 1000 < jwtParsed.exp) {
-            this.token = jwt;
-            // this.user = jwtParsed.user;
-            // this.user$.next(this.user);
+            && currentTime < jwtParsed.exp) 
+        {
+            this.setData(jwt, jwtParsed.user);
         }
     }
 
-    parseJwt(token) {
+    private parseJwt(token): Token {
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
         const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
@@ -44,22 +51,25 @@ export class AuthService {
         return JSON.parse(jsonPayload);
     };
 
-    login(username: String, password: String) {
+    private setData(token: string, user: IBasicUser): void {
+        this.token = token;
+        this.usersService.setCurrentUser(user);
+        this.userSocketService.createSocket();
+
+        localStorage.setItem('JWT', token);
+    }
+
+    login(username: String, password: String): void {
         this.http.post(`/api/login`, { username, password })
             .pipe(
                 tap((data: any) => {
                     if (data.token) {
-                        this.usersService.login(data.user);
-                        // this.user = data.user;
-                        this.token = data.token;
-                        // this.user$.next(this.user);
-                        localStorage.setItem("JWT", data.token);
-                        this.userSocketService.createSocket();
+                        this.setData(data.token, data.user);
+
                         this.router.navigate(['/']);
-                    } else if (data.error) {
-                        console.log(data.error);
-                    } else {
-                        console.log(data);
+                    }
+                    else {
+                        console.log(data.error || data);
                     }
                 })
             )
@@ -71,11 +81,12 @@ export class AuthService {
 
     logout() {
         localStorage.removeItem('JWT');
+        this.usersService.setCurrentUser(null);
         this.userSocketService.disconnectSocket();
         this.router.navigate(['/']);
     }
 
     isLogged(): Boolean {
-        return this.usersService.hasLogged() && this.userSocketService.getCurrentSocket();
+        return this.usersService.hasLogged() && (this.userSocketService.getCurrentSocket() !== null);
     }
 }
