@@ -2,7 +2,9 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from '@angular/common/http'
 import { Subject, BehaviorSubject } from 'rxjs';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class UsersService {
 
     user$: Subject<IBasicUser> = new BehaviorSubject<IBasicUser>(null);

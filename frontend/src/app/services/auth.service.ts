@@ -74,7 +74,6 @@ export class AuthService {
                 })
             )
             .subscribe((data) => { }, (err) => {
-                err();
                 console.log(err); // add message service
             });
     }

@@ -21,9 +21,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material';
 
-// Interceptors and services
+// Interceptors
 import { UrlInterceptor } from './interceptors/url.interceptor';
-import { UsersService } from './services/users.service';
 
 // Guards
 import { LoggedUserGuard } from './guards/logged-user.guard';
@@ -76,7 +75,6 @@ import { RaceMatTableComponent } from './components/race/race-mat-table/race-mat
             useClass: UrlInterceptor,
             multi: true
         },
-        UsersService,
         LoggedUserGuard
     ],
     bootstrap: [AppComponent]

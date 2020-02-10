@@ -8,7 +8,7 @@ const socketModule = (() => {
     let socketIO = null;
 
     const socketIOInit = (server): void => {
-        socketIO = io(server);
+        socketIO = io(server, { pingTimeout: 200000 });
     }
 
     const socketIOStart = (): void => {
@@ -45,6 +45,42 @@ const socketModule = (() => {
         client.on('logout-disconnect', () => {
             appLog('info', 'A user has disconnected');
             client.disconnect();
+        });
+
+        client.on('connect_timeout', (timeout) => {
+            console.log(timeout)
+        });
+
+        client.on('error', (error) => {
+            console.log(error)
+        });
+
+        client.on('reconnect', (attemptNumber) => {
+            console.log(attemptNumber)
+        });
+
+        client.on('reconnect_attempt', (attemptNumber) => {
+            console.log(attemptNumber)
+        });
+
+        client.on('reconnecting', (attemptNumber) => {
+            console.log(attemptNumber)
+        });
+
+        client.on('reconnect_error', (error) => {
+            console.log(error)
+        });
+
+        client.on('reconnect_failed', () => {
+            console.log('sdfsdf')
+        });
+
+        client.on('ping', () => {
+            console.log('fsdfisdnf')
+        });
+
+        client.on('pong', (latency) => {
+            console.log(latency)
         });
     }
 
