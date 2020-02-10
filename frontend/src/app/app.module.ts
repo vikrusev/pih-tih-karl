@@ -7,23 +7,39 @@ import { AppComponent } from './app.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule } from '@angular/forms';
+
+// Custom modules
+import { SharedModule } from './shared/shared.module' 
+
+// Material modules
 import { MatSliderModule } from '@angular/material/slider';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material';
 
+// Interceptors and services
 import { UrlInterceptor } from './interceptors/url.interceptor';
 import { UserSocketService } from './services/user-socket.service';
+import { UsersService } from './services/users.service';
 
+// Guards
+import { LoggedUserGuard } from './guards/logged-user.guard';
+
+// Layouts
 import { MainLayout } from './components/layout/main.layout';
 import { NavbarLayout } from './components/layout/navbar/navbar.layout';
 
+// Components
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { GameComponent } from './components/game/game.component';
+import { RaceComponent } from './components/race/race.component';
+import { RaceMatTableComponent } from './components/race/race-mat-table/race-mat-table.component';
 
 @NgModule({
     declarations: [
@@ -34,8 +50,11 @@ import { GameComponent } from './components/game/game.component';
         LoginComponent,
         RegisterComponent,
         GameComponent,
+        RaceComponent,
+        RaceMatTableComponent
     ],
     imports: [
+        SharedModule,
         BrowserModule,
         AppRoutingModule,
         FormsModule,
@@ -46,6 +65,8 @@ import { GameComponent } from './components/game/game.component';
         MatButtonModule,
         MatFormFieldModule,
         MatInputModule,
+        MatTableModule,
+        MatPaginatorModule
     ],
     providers: [
         {
@@ -53,7 +74,9 @@ import { GameComponent } from './components/game/game.component';
             useClass: UrlInterceptor,
             multi: true
         },
-        UserSocketService
+        UserSocketService,
+        UsersService,
+        LoggedUserGuard
     ],
     bootstrap: [AppComponent]
 })

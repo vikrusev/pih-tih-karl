@@ -9,7 +9,7 @@ import path from 'path'
 // helpers
 import config from './config'
 import { appLog } from './modules/helpers/logHelper'
-import SocketService  from './modules/helpers/socketService'
+import { socketModule } from './modules/helpers/socketModule'
 
 import passport from 'passport'
 import { Strategy as localStrategy } from 'passport-local'
@@ -23,15 +23,14 @@ import UserModel from './schemas/user'
 import * as constants from './globals/constants'
 
 // routes
-import { sampleRouter } from './routes/sample'
+import { sampleRouter } from './routes/sample.router'
+import { usersRouter } from './routes/users.router'
+import { mainRouter } from './routes/main.router'
 
 export default class App {
 
     private expressApp: express.Application = express();
     private server: Server = createServer(this.expressApp);
-    private socketService = new SocketService();
-
-    private config: Config = config;
 
     constructor() { }
 
@@ -39,7 +38,7 @@ export default class App {
         this.setProcessEvents();
         this.useMiddlewares();
         this.useRoutes();
-        this.setupSocketService();
+        this.setupSocketIOServer();
 
         this.startServer();
     }
@@ -48,9 +47,9 @@ export default class App {
         process.on('uncaughtException', err => {
             appLog('error', `${constants.unhandledException}: ${err.message} > Stack: ${err.stack}`);
         })
-        .on('unhandledRejection', (reason: Error, p) => {
-            appLog('error', `${constants.unhandledRejection}: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
-        });
+            .on('unhandledRejection', (reason: Error, p) => {
+                appLog('error', `${constants.unhandledRejection}: Promise ${p}. Reason: ${reason.message} > Stack(full): ${reason.stack}.`);
+            });
     }
 
     private useMiddlewares(): void {
@@ -58,7 +57,7 @@ export default class App {
             .use(cors())
             .use(express.json())
             .use(express.urlencoded({ extended: false }))
-            .use(express.static(path.join(this.config.app_root)));
+            .use(express.static(path.join(config.app_root)));
 
         passport.use('login', new localStrategy({
             usernameField: 'username',
@@ -139,8 +138,13 @@ export default class App {
                     const body = { _id: user._id, username: user.username };
 
                     const token = jwt.sign({ user: body }, 'top_secret', { expiresIn: '12h' });
+                    const userData = {
+                        email: user.email,
+                        username: user.username,
+                        isLogged: true
+                    };
 
-                    res.status(200).send({ token });
+                    res.status(200).send({ userData, token });
                 });
             })(req, res, next);
         })
@@ -157,12 +161,9 @@ export default class App {
             })(req, res, next);
         })
 
-        this.expressApp.use('/sample', sampleRouter)
-
-
-        this.expressApp.all('*', (req, res) => {
-            res.sendFile(path.join(this.config.app_root, 'angular-root.html'));
-        })
+        this.expressApp.use('/sample', sampleRouter);
+        this.expressApp.use('/users', usersRouter);
+        this.expressApp.use('/', mainRouter);
 
         // TO-DO: make a better error handler
         this.expressApp.use((err, req, res, next) => {
@@ -175,13 +176,13 @@ export default class App {
         })
     }
 
-    private setupSocketService(): void {
-        this.socketService.init(this.server);
-        this.socketService.start();
+    private setupSocketIOServer(): void {
+        socketModule.socketIOInit(this.server);
+        socketModule.socketIOStart();
     }
 
     private startServer(): void {
-        const port = process.env.PORT || this.config.port;
+        const port = process.env.PORT || config.port;
         this.server.listen(port, () => {
             // a console.log is mandatory so to open the browser at the given port when the server has started running
             console.log(`Server listening on port: ${port}`);
