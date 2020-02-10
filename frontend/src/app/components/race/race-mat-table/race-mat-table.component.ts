@@ -48,7 +48,6 @@ export class RaceMatTableComponent implements OnInit {
     }
 
     filterPredicate(user: ITableUser, filterValue: string): boolean {
-        console.log(user)
         return user.username.includes(filterValue) || user.email.includes(filterValue);
     }
 
