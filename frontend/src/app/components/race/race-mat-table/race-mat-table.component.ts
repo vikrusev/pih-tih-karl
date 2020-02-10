@@ -78,9 +78,9 @@ export class RaceMatTableComponent implements OnInit {
     private async prepareTableData(): Promise<MatTableDataSource<ITableUser>> {
         try {
             let allUsers: IBasicUser[] = await this.usersService.getAllOnlineUsers();
-            const currentUser = this.usersService.getCurrentUser();
+            const currentUsername: String = this.usersService.getCurrentUsername();
 
-            allUsers = allUsers.filter((user: ITableUser) => user.username !== currentUser.username);
+            allUsers = allUsers.filter((user: ITableUser) => user.username !== currentUsername);
 
             return new MatTableDataSource(allUsers);
         }

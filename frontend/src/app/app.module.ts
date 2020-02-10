@@ -23,7 +23,6 @@ import { MatPaginatorModule } from '@angular/material';
 
 // Interceptors and services
 import { UrlInterceptor } from './interceptors/url.interceptor';
-import { UserSocketService } from './services/user-socket.service';
 import { UsersService } from './services/users.service';
 
 // Guards
@@ -77,7 +76,6 @@ import { RaceMatTableComponent } from './components/race/race-mat-table/race-mat
             useClass: UrlInterceptor,
             multi: true
         },
-        UserSocketService,
         UsersService,
         LoggedUserGuard
     ],

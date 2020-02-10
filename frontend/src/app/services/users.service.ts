@@ -1,8 +1,13 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from '@angular/common/http'
+import { Subject, BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class UsersService {
+
+    user$: Subject<IBasicUser> = new BehaviorSubject<IBasicUser>(null);
+
+    user;
 
     constructor(private http: HttpClient) { }
 
@@ -10,9 +15,8 @@ export class UsersService {
         return this.http.get<IBasicUser[]>('/users/online').toPromise();
     }
 
-    getCurrentUser() {
-        const user = JSON.parse(sessionStorage.getItem('user'));
-        return user;
+    getCurrentUsername(): String {
+        return this.auth.getUsername();
     }
 
     setCurrentUser(userData): void {
@@ -24,9 +28,12 @@ export class UsersService {
         sessionStorage.removeItem(itemKey)
     }
 
+    login(user: any) {
+        throw new Error("Method not implemented.");
+    }
+
     hasLogged(): Boolean {
-        const user = this.getCurrentUser();
-        return user && user.isLogged;
+        return this.user !== null;
     }
 
 }

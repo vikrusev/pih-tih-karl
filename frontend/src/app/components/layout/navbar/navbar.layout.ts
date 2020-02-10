@@ -7,9 +7,8 @@ import { AuthService } from 'src/app/services/auth.service';
     styleUrls: ['./navbar.layout.scss']
 })
 export class NavbarLayout {
-    isLogged: boolean;
 
-    constructor(private auth: AuthService) { }
+    constructor(public auth: AuthService) { }
 
     logout() {
         this.auth.logout();

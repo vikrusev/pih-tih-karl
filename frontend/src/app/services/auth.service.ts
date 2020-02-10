@@ -12,13 +12,12 @@ import { UsersService } from './users.service';
     providedIn: 'root'
 })
 export class AuthService {
-    user$: Subject<IBasicUser> = new BehaviorSubject<IBasicUser>(null);
-
-
-    user: IBasicUser;
     token: string;
 
-    constructor(private http: HttpClient, private router: Router, private userSocketService: UserSocketService, private usersService: UsersService) {
+    constructor(
+        private http: HttpClient, private router: Router,
+        private userSocketService: UserSocketService,
+        private usersService: UsersService) {
         const jwt = localStorage.getItem('JWT');
         let jwtParsed;
         if (jwt) {
@@ -30,8 +29,8 @@ export class AuthService {
             && jwtParsed.user
             && (new Date).getTime() / 1000 < jwtParsed.exp) {
             this.token = jwt;
-            this.user = jwtParsed.user;
-            this.user$.next(this.user);
+            // this.user = jwtParsed.user;
+            // this.user$.next(this.user);
         }
     }
 
@@ -50,9 +49,10 @@ export class AuthService {
             .pipe(
                 tap((data: any) => {
                     if (data.token) {
-                        this.user = data.user;
+                        this.usersService.login(data.user);
+                        // this.user = data.user;
                         this.token = data.token;
-                        this.user$.next(this.user);
+                        // this.user$.next(this.user);
                         localStorage.setItem("JWT", data.token);
                         this.userSocketService.createSocket();
                         this.router.navigate(['/']);
@@ -70,10 +70,11 @@ export class AuthService {
     }
 
     logout() {
-        this.user$.next(null);
+        localStorage.removeItem('JWT');
+        this.userSocketService.disconnectSocket();
         this.router.navigate(['/']);
     }
-  
+
     isLogged(): Boolean {
         return this.usersService.hasLogged() && this.userSocketService.getCurrentSocket();
     }
