@@ -4,6 +4,7 @@
         "secure": false,
         "pathRewrite": {
             "^/backend": ""
-        }
+        },
+        "changeOrigin": true
     }
 }

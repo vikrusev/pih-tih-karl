@@ -1,0 +1,99 @@
+$panel-width: 600px;
+$panel-width-small: 450px;
+
+$panel-upper-height: 60%;
+$panel-bottom-height: 100% - $panel-upper-height;
+
+.background-lid {
+    background-color: #000;
+    opacity: .4;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2100;
+    top: 0;
+    left: 0;
+}
+
+.popup-panel {
+    position: fixed;
+    background-color: #fff;
+    top: 25%;
+    width: $panel-width;
+    left: calc(50% - 1/2 * #{$panel-width});
+    border-radius: 4px;
+    z-index: 2200;
+
+    .popup-panel-upper {
+        height: $panel-upper-height;
+        padding: 30px;
+
+        .layer-x {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+            &:hover {
+                color: #a0a0a0;
+            }
+        }
+
+        .title {
+            letter-spacing: 2px;
+            margin-top: 0;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .body {
+            font-size: 18px;
+        }
+    }
+
+    .popup-panel-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f4f5f7;
+        height: $panel-bottom-height;
+        padding: 30px;
+
+        .modal-small-button {
+            width: 200px;
+            background-color: #d8d7d7;
+            color: #000;
+            border-radius: 4px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background-color: #c3c3c3;
+            }
+        
+            &:not(:last-child) {
+                margin-right: 20px;
+            }
+        }
+    }
+
+    @media (max-width: 767px) {
+        width: $panel-width-small;
+        left: calc(50% - 1/2 * #{$panel-width-small});
+
+        .popup-panel-upper {
+            padding: 20px;
+        }
+    }
+}
+
+.text-center {
+    text-align: center;
+}
+
+.pull-right {
+    float: right !important;
+}

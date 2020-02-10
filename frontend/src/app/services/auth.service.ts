@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 import { Subject, BehaviorSubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators'
-import { Router } from '@angular/router';
+
+import { UserSocketService } from './user-socket.service';
+import { UsersService } from './users.service';
 
 @Injectable({
     providedIn: 'root'
@@ -10,10 +14,11 @@ import { Router } from '@angular/router';
 export class AuthService {
     user$: Subject<IBasicUser> = new BehaviorSubject<IBasicUser>(null);
 
+
     user: IBasicUser;
     token: string;
 
-    constructor(private http: HttpClient, private router: Router) {
+    constructor(private http: HttpClient, private router: Router, private userSocketService: UserSocketService, private usersService: UsersService) {
         const jwt = localStorage.getItem('JWT');
         let jwtParsed;
         if (jwt) {
@@ -49,6 +54,7 @@ export class AuthService {
                         this.token = data.token;
                         this.user$.next(this.user);
                         localStorage.setItem("JWT", data.token);
+                        this.userSocketService.createSocket();
                         this.router.navigate(['/']);
                     } else if (data.error) {
                         console.log(data.error);
@@ -66,5 +72,9 @@ export class AuthService {
     logout() {
         this.user$.next(null);
         this.router.navigate(['/']);
+    }
+  
+    isLogged(): Boolean {
+        return this.usersService.hasLogged() && this.userSocketService.getCurrentSocket();
     }
 }

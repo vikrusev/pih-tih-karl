@@ -3,8 +3,11 @@ import { Document } from 'mongoose';
 declare global {
     interface IBasicUser {
         username: String,
+        email: String,
         password: String,
         lastLogin: Date, // Date of last successful login
+        wins: Number,
+        losses: Number,
         profile: IUserProfile,
         firstName: String,
         lastName: String

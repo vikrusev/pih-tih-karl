@@ -1,0 +1,21 @@
+<mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Filter by username or email...">
+</mat-form-field>
+
+<button mat-raised-button (click)="refreshTable()"> Refresh Table </button>
+
+<div class="main">
+    <table mat-table [dataSource]="onlineUsers" class="main-mat-table">
+
+        <ng-container *ngFor="let column of displayColumns" [matColumnDef]="column">
+            <th mat-header-cell *matHeaderCellDef> {{ column }} </th>
+            <td mat-cell *matCellDef="let element"> {{ element[column] || 0 }} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayColumns;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>

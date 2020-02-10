@@ -7,7 +7,8 @@
     "start": "cd frontend && npm run start",
     "build": "cd frontend && npm run build",
     "prod": "cd frontend && npm run prod",
-    "test": "cd backend && npm test"
+    "test": "cd backend && npm test",
+    "i": "cd frontend && npm i && cd ../backend && npm i"
   },
   "private": true
 }

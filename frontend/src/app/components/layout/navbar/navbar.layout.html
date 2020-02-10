@@ -12,5 +12,4 @@
             <button *ngIf="auth.user$ | async as user" mat-button color="accent" routerLink="profile" style="margin-left: auto;">{{ user.username }}</button>
             <button mat-button color="accent" (click)="logout()">logout</button>
       </ng-template>
-
 </mat-toolbar>
