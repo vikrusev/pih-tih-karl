@@ -6,6 +6,8 @@ declare global {
         email: String,
         password: String,
         lastLogin: Date, // Date of last successful login
+        wins: Number,
+        losses: Number,
         profile: IUserProfile,
         firstName: String,
         lastName: String

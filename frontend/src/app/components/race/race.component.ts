@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
 
 import { UsersService } from '../../services/users.service';
+
+interface ITableUser {
+    email: String,
+    username: String,
+    wins: Number,
+    losses: Number
+}
 
 @Component({
     selector: 'app-race',
@@ -10,33 +16,46 @@ import { UsersService } from '../../services/users.service';
 })
 export class RaceComponent implements OnInit {
 
-    onlineUsers: any = null;
-    displayedColumns: string[] = ['username', 'email'];
+    onlineUsers: ITableUser[] = [];
+    displayColumns: string[] = ['username', 'email', 'wins', 'losses'];
+    autoRefreshTableMS: number = 3000;
 
     constructor(private usersService: UsersService) { }
 
     async ngOnInit() {
-        this.onlineUsers = await this.prepareTableTable();
-        this.onlineUsers.filterPredicate = this.filterPredicate;
+        setTimeout(async () => {
+            this.onlineUsers = await this.prepareTableData() || [];
+
+            setInterval(async () => {
+                this.onlineUsers = await this.prepareTableData() || [];
+            }, this.autoRefreshTableMS);
+        }, 1000);
+
     }
-    
-    applyFilter(event: Event) {
-        const filterValue = (event.target as HTMLInputElement).value;
-        this.onlineUsers.filter = filterValue.trim().toLowerCase();
-    }
-    
-    private filterPredicate(user: IBasicUser, filterValue: string): Boolean {
+
+    filterPredicate(user: IBasicUser, filterValue: string): Boolean {
         return user.username.includes(filterValue) || user.email.includes(filterValue);
     }
 
-    private async prepareTableTable(): Promise<MatTableDataSource<IBasicUser>> {
+    private async prepareTableData(): Promise<ITableUser[]> {
         try {
-            let dataSource: IBasicUser[] = await this.usersService.getAllOnlineUsers();
+            const allUsers: IBasicUser[] = await this.usersService.getAllOnlineUsers();
+
+            let cleanDataSource: ITableUser[] = allUsers.map((user) => {
+                let obj = {
+                    email: user.email,
+                    username: user.username,
+                    wins: user.wins,
+                    losses: user.losses
+                }
+
+                return obj;
+            });
 
             const currentUser = this.usersService.getCurrentUser();
-            dataSource = dataSource.filter((user: IBasicUser) => user.username !== currentUser.username);
-
-            return new MatTableDataSource(dataSource);
+            cleanDataSource = cleanDataSource.filter((user: ITableUser) => user.username !== currentUser.username);
+            
+            return cleanDataSource;
         }
         catch (e) {
             console.log(e);
