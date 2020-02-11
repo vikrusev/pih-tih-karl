@@ -8,7 +8,9 @@
     "build": "cd frontend && npm run build",
     "prod": "cd frontend && npm run prod",
     "test": "cd backend && npm test",
-    "i": "cd frontend && npm i && cd ../backend && npm i"
+    "i": "cd frontend && npm i && cd ../backend && npm i",
+    "heroku-prebuild": "cd frontend && npm i && cd ../backend && npm i",
+    "heroku-postbuild": "npm run prod"
   },
   "private": true
 }
