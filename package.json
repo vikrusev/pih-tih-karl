@@ -2,6 +2,7 @@
   "name": "pih-tih-karl-full",
   "version": "1.0.0",
   "license": "MIT",
+  "main": "backend/builds/prod/app.js",
   "scripts": {
     "ng": "cd frontend && npm run ng",
     "start": "cd frontend && npm run start",
@@ -9,8 +10,8 @@
     "prod": "cd frontend && npm run prod",
     "test": "cd backend && npm test",
     "i": "cd frontend && npm i && cd ../backend && npm i",
-    "heroku-prebuild": "cd frontend && npm i && cd ../backend && npm i",
-    "heroku-postbuild": "npm run prod"
+    "heroku-prebuild": "cd frontend && npm i && cd ../backend && npm i && tsc -p backend/tsconfig-prod.json",
+    "heroku-postbuild": "cd backend/builds/prod/app.js"
   },
   "private": true
 }
