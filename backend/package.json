@@ -28,7 +28,9 @@
     "tslint": "~5.11.0",
     "typescript": "^3.7.5"
   },
-  "scripts": {},
+  "scripts": {
+    "tsc": "tsc"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC"
