@@ -76,10 +76,9 @@ export class RegisterComponent {
         }
 
         try {
-            const availability = await this.registerService.checkAvailability(checkFields);
-            const takenFields = availability.data;
+            const takenFields = await this.registerService.checkAvailability(checkFields);
 
-            if (availability.data.length) {
+            if (takenFields.length) {
                 this.formValid = false;
 
                 for (let f in takenFields) {

@@ -21,13 +21,18 @@ const socketModule = (() => {
 
     const getAllActiveUsers = async (): Promise<IBasicUser[]> => {
         const allActiveSockets = getAllActiveSockets();
+        let usernames: string[] = [];
 
         let users: IBasicUser[] = [];
         for (const socket in allActiveSockets) {
             const username = allActiveSockets[socket].request._query['username'];
-         
-            const user = await UserModel.findOne({ username: username }).lean();
-            users.push(user);
+
+            if (!usernames.includes(username)) {
+                const user = await UserModel.findOne({ username: username }).lean();
+    
+                users.push(user);
+                usernames.push(username);
+            }
         }
 
         return users;

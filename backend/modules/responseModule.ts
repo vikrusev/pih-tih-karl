@@ -3,7 +3,7 @@ const responseModule = (() => {
     const ok = (res, obj) => {
         res.type('json');
         res.status(200);
-        res.json({ data: obj });
+        res.json(obj);
         res.end();
 
         return false;
