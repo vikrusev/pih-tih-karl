@@ -3,9 +3,6 @@ import express from 'express';
 import cors from 'cors';
 import { createServer, Server } from 'http'
 
-// additional modules
-import path from 'path'
-
 // helpers
 import config from './config'
 import { appLog } from './modules/helpers/logHelper'
@@ -55,7 +52,6 @@ export default class App {
             .use(cors())
             .use(express.json())
             .use(express.urlencoded({ extended: false }))
-            .use(express.static(path.join(config.app_root)));
     }
 
     private setPassportStrategies(): void {

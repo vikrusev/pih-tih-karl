@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "../backend/public",
+            "outputPath": "../backend/public/frontend",
             "deleteOutputPath": false,
             "index": "src/angular-root.html",
             "main": "src/main.ts",
