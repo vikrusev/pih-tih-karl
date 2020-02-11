@@ -9,12 +9,10 @@
     "prod": "cd frontend && npm run prod",
     "test": "cd backend && npm test",
     "i": "cd frontend && npm i && cd ../backend && npm i",
-    
-    "heroku-postbuild": "cd backend/builds/prod/app.js",
+    "heroku-prebuild": "cd frontend && npm i && cd ../backend && npm i",
 
-    "tsc": "tsc",
-    "build-ts": "cd backend && npm run tsc",
-    "postinstall": "npm run build-ts",
+    "postinstall": "cd backend && npm run build-ts",
+    
     "start": "npm run serve",
     "serve": "node backend/builds/prod/app.js"
   },

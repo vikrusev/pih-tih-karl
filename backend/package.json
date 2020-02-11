@@ -29,7 +29,8 @@
     "typescript": "^3.7.5"
   },
   "scripts": {
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "build-ts": "npm run tsc"
   },
   "keywords": [],
   "author": "",
