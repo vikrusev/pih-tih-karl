@@ -43,6 +43,7 @@ export class UserSocketService {
 
     private setSocketEvents(): void {
         this.socket.on('disconnect', () => {
+            console.log('socket disconnected');
             this.socket = this.socket.close();
             this.socket = null;
         });
@@ -56,11 +57,15 @@ export class UserSocketService {
         });
 
         this.socket.on('reconnect', (attemptNumber) => {
-            console.log(`socket reconnect: ${attemptNumber}`)
+            console.log(`socket successfully reconnected after ${attemptNumber} attempts`)
         });
 
         this.socket.on('reconnect_attempt', (attemptNumber) => {
             console.log(`socket reconnect_attempt: ${attemptNumber}`)
+
+            if (attemptNumber > 20) {
+                this.disconnectSocket();
+            }
         });
 
         this.socket.on('reconnecting', (attemptNumber) => {
