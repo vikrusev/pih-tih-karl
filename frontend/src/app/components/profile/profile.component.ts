@@ -19,9 +19,13 @@ export class ProfileComponent implements OnInit {
     }
 
     async updateData() {
-        console.log(this.user)
-        // const newUser: IExtendedUser = await this.userService.updateUser(this.user);
-        // this.userService.setCurrentUser(newUser);
+        try {
+            const newUser: IExtendedUser = await this.userService.updateUser(this.user);
+            this.userService.setCurrentUser(newUser);
+        }
+        catch (err) {
+            this.profileError = err.error.message;
+        }
     }
 
 }

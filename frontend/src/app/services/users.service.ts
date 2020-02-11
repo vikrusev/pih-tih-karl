@@ -17,7 +17,7 @@ export class UsersService {
         return this.http.get<IExtendedUser[]>('/users/online').toPromise();
     }
 
-    updateUser(personalData): Promise<IExtendedUser> {
+    updateUser(personalData: IExtendedUser): Promise<IExtendedUser> {
         return this.http.patch<IExtendedUser>('/users/update-profile', personalData).toPromise();
     }
 
