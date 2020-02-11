@@ -15,4 +15,15 @@ usersRouter.get('/online', async (req, res) => {
     }
 })
 
+usersRouter.patch('/update-profile', async (req, res) => {
+    try {
+        const users: IExtendedUser[] = await socketModule.getAllActiveUsers();
+
+        responseModule.ok(res, users);
+    }
+    catch (err) {
+        responseModule.err(res, err);
+    }
+})
+
 export { usersRouter };
