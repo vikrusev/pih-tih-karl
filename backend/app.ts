@@ -11,19 +11,15 @@ import config from './config'
 import { appLog } from './modules/helpers/logHelper'
 import { socketModule } from './modules/helpers/socketModule'
 
+// passport imports
 import passport from 'passport'
-import { Strategy as localStrategy } from 'passport-local'
-import { ExtractJwt, Strategy as JWTstrategy } from 'passport-jwt'
-
-import * as jwt from 'jsonwebtoken'
-
-import UserModel from './schemas/user'
+import { localPassportStrategy, JWTPassportStrategy } from './strategies/passport.startegies'
 
 // constants
 import * as constants from './globals/constants'
 
 // routes
-import { sampleRouter } from './routes/sample.router'
+import { apiRouter } from './routes/api.router'
 import { usersRouter } from './routes/users.router'
 import { mainRouter } from './routes/main.router'
 
@@ -38,6 +34,7 @@ export default class App {
         this.setProcessEvents();
         this.useMiddlewares();
         this.useRoutes();
+        this.setPassportStrategies();
         this.setupSocketIOServer();
 
         this.startServer();
@@ -58,113 +55,15 @@ export default class App {
             .use(express.json())
             .use(express.urlencoded({ extended: false }))
             .use(express.static(path.join(config.app_root)));
+    }
 
-        passport.use('login', new localStrategy({
-            usernameField: 'username',
-            passwordField: 'password'
-        }, async (username, password, done) => {
-            try {
-                const user = await UserModel.findOne({ username });
-
-                if (!user) {
-                    return done(null, false, { message: 'User not found' });
-                }
-
-                const validate = await user.isValidPassword(password);
-
-                if (!validate) {
-                    return done(null, false, { message: 'Wrong Password' });
-                }
-
-                return done(null, user, { message: 'Logged in Successfully' });
-            } catch (err) {
-                done(err);
-            }
-        }));
-
-        passport.use('jwt', new JWTstrategy({
-            secretOrKey: 'top_secret', // TODO: change this
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
-        }, async (jwt_payload, done) => {
-            try {
-                const user = await UserModel.findById(jwt_payload._id);
-                if (user) {
-                    done(null, user);
-                } else {
-                    done(null, false);
-                }
-            } catch (error) {
-                done(error);
-            }
-        }));
+    private setPassportStrategies(): void {
+        passport.use('login', localPassportStrategy);
+        passport.use('jwt', JWTPassportStrategy);
     }
     
     private useRoutes(): void {
-
-        this.expressApp.get('/api/users', (req, res) => {
-            UserModel.find((err, users) => {
-                res.send({ users });
-            });
-        })
-
-        this.expressApp.post('/api/register', (req, res) => {
-            const username = req.body.username;
-            const password = req.body.password;
-            const email = req.body.email;
-
-            if (!username || !password || !email) {
-                res.status(400).send({ error: 'not enough information added' });
-            }
-
-            UserModel.create({ email, username, password }, (err, newUser) => {
-                if (err) {
-                    // res.send('something went wrong'); //TODO: use error codes
-                    res.status(400).send({ error: err.message });
-                } else {
-                    res.status(200).send({ message: 'Success!' });
-                }
-            });
-        });
-
-        this.expressApp.post('/api/login', (req, res, next) => {
-            passport.authenticate('login', (err, user, info) => {
-                if (err) { return next(err); }
-
-                if (!user) { res.send({ error: "username or password is wrong" }); } //TODO: better errors
-
-                req.login(user, { session: false }, async (err) => {
-                    if (err) { return next(err); }
-
-                    const body = { _id: user._id, username: user.username };
-
-                    const token = jwt.sign({ user: body }, 'top_secret', { expiresIn: '12h' });
-                    const userData = {
-                        email: user.email,
-                        username: user.username,
-                        id: user._id
-                    };
-
-
-                    res.status(200).send({
-                        token, user: userData
-                    });
-                });
-            })(req, res, next);
-        })
-
-        this.expressApp.get('/api/secure', (req, res, next) => {
-            passport.authenticate('jwt', { session: false }, (err, user, info) => {
-                if (err) {
-                    res.status(400).send({ error: `Error occured ${err.message}` });
-                } else if (info !== undefined) {
-                    res.status(400).send({ error: info.message });
-                } else {
-                    res.status(200).send({ message: 'success' });
-                }
-            })(req, res, next);
-        })
-
-        this.expressApp.use('/sample', sampleRouter);
+        this.expressApp.use('/api', apiRouter);
         this.expressApp.use('/users', usersRouter);
         this.expressApp.use('/', mainRouter);
 
