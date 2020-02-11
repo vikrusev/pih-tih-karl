@@ -17,7 +17,7 @@
     "postinstall": "cd backend && npm run build-ts",
 
     "start": "npm run serve",
-    "serve": "node backend/builds/prod/app.js"ß
+    "serve": "node backend/builds/prod/app.js"
   },
   "private": true
 }
