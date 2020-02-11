@@ -5,8 +5,17 @@
     "tasks": [
         {
             "type": "typescript",
-            "label": "ts-to-js",
-            "tsconfig": "backend",
+            "label": "ts-to-js-dev",
+            "tsconfig": "backend/tsconfig-dev.json",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": "build"
+        },
+        {
+            "type": "typescript",
+            "label": "ts-to-js-prod",
+            "tsconfig": "backend/tsconfig-prod.json",
             "problemMatcher": [
                 "$tsc"
             ],

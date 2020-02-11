@@ -3,7 +3,7 @@
     "compilerOptions": {
         "noImplicitAny": false,
         "baseUrl": "./",
-        "outDir": "./public",
+        "outDir": "./builds/dev",
         "sourceMap": true,
         "declaration": false,
         "module": "CommonJS",

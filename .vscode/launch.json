@@ -9,9 +9,9 @@
             "request": "launch",
             "name": "Debug App Dev",
             "program": "${workspaceRoot}/backend/app.ts",
-            "preLaunchTask": "ts-to-js",
+            "preLaunchTask": "ts-to-js-dev",
             "outFiles": [
-                "${workspaceFolder}/backend/public/**/*.js"
+                "${workspaceFolder}/backend/builds/dev/**/*.js"
             ],
             "cwd": "${workspaceRoot}/backend",
             "protocol": "inspector",
@@ -33,9 +33,9 @@
             "request": "launch",
             "name": "Debug App Prod",
             "program": "${workspaceRoot}/backend/app.ts",
-            "preLaunchTask": "ts-to-js",
+            "preLaunchTask": "ts-to-js-prod",
             "outFiles": [
-                "${workspaceFolder}/backend/public/**/*.js"
+                "${workspaceFolder}/backend/builds/prod/**/*.js"
             ],
             "cwd": "${workspaceRoot}/backend",
             "protocol": "inspector",
