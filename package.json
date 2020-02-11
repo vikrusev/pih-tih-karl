@@ -5,13 +5,18 @@
   "main": "backend/builds/prod/app.js",
   "scripts": {
     "ng": "cd frontend && npm run ng",
-    "start": "cd frontend && npm run start",
     "build": "cd frontend && npm run build",
     "prod": "cd frontend && npm run prod",
     "test": "cd backend && npm test",
     "i": "cd frontend && npm i && cd ../backend && npm i",
-    "heroku-prebuild": "cd frontend && npm i && cd ../backend && npm i && tsc -p tsconfig-prod.json",
-    "heroku-postbuild": "cd backend/builds/prod/app.js"
+    "heroku-prebuild": "cd frontend && npm i && cd ../backend && npm i",
+    "heroku-postbuild": "cd backend/builds/prod/app.js",
+
+
+    "build-ts": "cd backend && tsc",
+    "postinstall": "npm run build-ts",
+    "start": "npm run serve",
+    "serve": "node backend/builds/prod/app.js"
   },
   "private": true
 }
