@@ -1,28 +1,28 @@
 // server-related modules
 import express from 'express';
 import cors from 'cors';
-import { createServer, Server } from 'http'
+import { createServer, Server } from 'http';
 
 // additional modules
-import path from 'path'
+import path from 'path';
 
 // helpers
-import config from './config'
-import { appLog } from './modules/helpers/logHelper'
-import { responseModule } from './modules/responseModule'
-import { socketModule } from './modules/socketModule'
+import config from './config';
+import { appLog } from './modules/helpers/logHelper';
+import { responseModule } from './modules/responseModule';
+import { socketModule } from './modules/socketModule';
 
 // passport imports
-import passport from 'passport'
-import { localPassportStrategy, JWTPassportStrategy } from './strategies/passport.startegies'
+import passport from 'passport';
+import { localPassportStrategy, JWTPassportStrategy } from './strategies/passport.startegies';
 
 // constants
-import * as constants from './globals/constants'
+import * as constants from './globals/constants';
 
 // routes
-import { apiRouter } from './routes/api.router'
-import { usersRouter } from './routes/users.router'
-import { mainRouter } from './routes/main.router'
+import { apiRouter } from './routes/api.router';
+import { usersRouter } from './routes/users.router';
+import { mainRouter } from './routes/main.router';
 
 export default class App {
 
