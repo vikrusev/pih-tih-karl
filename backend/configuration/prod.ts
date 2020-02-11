@@ -14,7 +14,7 @@ export default class ConfigModuleProd {
     readonly mongoURL: string = `mongodb+srv://viktorvr:1t5HqATyTC7XZ0mc@pihtihkarl-3grbo.azure.mongodb.net/${this.mongoDB}?retryWrites=true&w=majority`;
     readonly mongoose = mongoose;
     readonly port: number | string = 3000;
-    readonly app_root: string = path.join(path.resolve(__dirname), '..');
+    readonly app_root: string = path.join(path.resolve(__dirname), '..', '..');
     readonly appLogFile: string = path.join(this.app_root, 'logs', 'app.log');
     readonly appLogDateFormat: string = "YYYY-MM-DD HH:mm:ss";
 
