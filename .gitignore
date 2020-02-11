@@ -4,7 +4,7 @@
 /dist
 /tmp
 /out-tsc
-/backend/public
+/backend/app
 
 # dependencies
 backend/node_modules
@@ -48,4 +48,3 @@ testem.log
 .DS_Store
 Thumbs.db
 
-backend/logs
