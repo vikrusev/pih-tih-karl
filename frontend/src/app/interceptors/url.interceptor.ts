@@ -34,7 +34,7 @@ export class UrlInterceptor implements HttpInterceptor {
                 }
             }),
             catchError((err: HttpErrorResponse) => {
-                console.error(`HttpResponse error occured. ERROR: ${err.message}`);
+                // console.error(`HttpResponse error occured. ERROR: ${err.message}`);
                 return throwError(err);
             })
         );

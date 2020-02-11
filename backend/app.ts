@@ -9,6 +9,7 @@ import path from 'path'
 // helpers
 import config from './config'
 import { appLog } from './modules/helpers/logHelper'
+import { responseModule } from './modules/responseModule'
 import { socketModule } from './modules/socketModule'
 
 // passport imports
@@ -70,11 +71,11 @@ export default class App {
         // TO-DO: make a better error handler
         this.expressApp.use((err, req, res, next) => {
             if (err.message === 'Unauthorized') {
-                res.status(401).send('Unauthorized');
+                responseModule.unauthorized(res, err);
                 return;
             }
 
-            res.status(500).send('Server error!');
+            responseModule.err(res, err);
         })
     }
 

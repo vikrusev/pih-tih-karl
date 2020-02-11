@@ -3,7 +3,7 @@ const responseModule = (() => {
     const ok = (res, obj) => {
         res.type('json');
         res.status(200);
-        res.json(obj);
+        res.json({ data: obj });
         res.end();
 
         return false;
@@ -13,7 +13,7 @@ const responseModule = (() => {
         status = Number(status);
 
         if (!status) {
-            status = 400;
+            status = 500;
         }
 
         let error = {
