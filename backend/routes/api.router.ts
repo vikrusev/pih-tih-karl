@@ -30,18 +30,11 @@ apiRouter.post('/login', (req, res, next) => {
         req.login(user, { session: false }, async (err) => {
             if (err) { return next(err); }
 
-            const body = { _id: user._id, username: user.username };
-
-            const token = jwt.sign({ user: body }, 'top_secret', { expiresIn: '12h' });
-            const userData = {
-                email: user.email,
-                username: user.username,
-                id: user._id
-            };
+            const token = jwt.sign({ user: user }, 'top_secret', { expiresIn: '12h' });
 
             responseModule.ok(res, {
                 token,
-                user: userData
+                user
             });
         });
     })(req, res, next);

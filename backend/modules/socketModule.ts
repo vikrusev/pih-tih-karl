@@ -19,16 +19,23 @@ const socketModule = (() => {
         return socketIO.sockets.sockets;
     }
 
-    const getAllActiveUsers = async (): Promise<IBasicUser[]> => {
+    const getAllActiveUsers = async (): Promise<IExtendedUser[]> => {
         const allActiveSockets = getAllActiveSockets();
         let usernames: string[] = [];
 
-        let users: IBasicUser[] = [];
+        let users: IExtendedUser[] = [];
+        let username: string = null;
+        const projection = {
+            username: 1,
+            email: 1,
+            wins: 1,
+            losses: 1
+        }
         for (const socket in allActiveSockets) {
-            const username = allActiveSockets[socket].request._query['username'];
+            username = allActiveSockets[socket].request._query['username'];
 
             if (!usernames.includes(username)) {
-                const user = await UserModel.findOne({ username: username }).lean();
+                const user = await UserModel.findOne({ username: username }, projection).lean();
     
                 users.push(user);
                 usernames.push(username);

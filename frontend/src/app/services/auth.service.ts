@@ -9,7 +9,7 @@ import { tap } from 'rxjs/operators'
 
 interface Token {
     exp: number,
-    user: IBasicUser
+    user: IExtendedUser
 }
 
 @Injectable({
@@ -51,7 +51,7 @@ export class AuthService {
         return JSON.parse(jsonPayload);
     };
 
-    private setData(token: string, user: IBasicUser): void {
+    private setData(token: string, user: IExtendedUser): void {
         this.token = token;
         this.usersService.setCurrentUser(user);
         this.userSocketService.createSocket();

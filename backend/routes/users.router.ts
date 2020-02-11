@@ -6,7 +6,7 @@ const usersRouter = express.Router();
 
 usersRouter.get('/online', async (req, res) => {
     try {
-        const users: IBasicUser[] = await socketModule.getAllActiveUsers();
+        const users: IExtendedUser[] = await socketModule.getAllActiveUsers();
 
         responseModule.ok(res, users);
     }

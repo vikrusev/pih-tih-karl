@@ -7,17 +7,17 @@ import { Subject, BehaviorSubject } from 'rxjs';
 })
 export class UsersService {
 
-    user$: Subject<IBasicUser> = new BehaviorSubject<IBasicUser>(null);
+    user$: Subject<IExtendedUser> = new BehaviorSubject<IExtendedUser>(null);
 
-    user: IBasicUser = null;
+    user: IExtendedUser = null;
 
     constructor(private http: HttpClient) { }
 
-    getAllOnlineUsers(): Promise<IBasicUser[]> {
-        return this.http.get<IBasicUser[]>('/users/online').toPromise();
+    getAllOnlineUsers(): Promise<IExtendedUser[]> {
+        return this.http.get<IExtendedUser[]>('/users/online').toPromise();
     }
 
-    getCurrentUser(): IBasicUser {
+    getCurrentUser(): IExtendedUser {
         return this.user;
     }
 
@@ -25,7 +25,7 @@ export class UsersService {
         return this.user ? this.user.username : null;
     }
 
-    setCurrentUser(user: IBasicUser) {
+    setCurrentUser(user: IExtendedUser) {
         this.user = user;
         this.user$.next(this.user);
     }
