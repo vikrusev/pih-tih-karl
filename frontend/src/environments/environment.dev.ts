@@ -2,6 +2,7 @@ export const environment = {
     production: false,
     apiUrl: '',
     envName: 'dev',
-    backendUrl: 'http://localhost:3000'
+    backendUrl: 'http://localhost:3000',
+    customPath: ''
   };
   

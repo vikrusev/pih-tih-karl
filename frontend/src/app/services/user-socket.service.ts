@@ -34,7 +34,7 @@ export class UserSocketService {
         const currentUser: IBasicUser = this.usersService.getCurrentUser();
 
         if (currentUser) {
-            this.socket = io(environment.backendUrl, { query: `username=${currentUser.username}` });
+            this.socket = io(environment.backendUrl, { path: `${environment.customPath}/socket.io`, query: `username=${currentUser.username}` });
         }
         else {
             console.log('no user');

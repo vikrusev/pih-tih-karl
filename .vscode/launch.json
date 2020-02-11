@@ -11,7 +11,7 @@
             "program": "${workspaceRoot}/backend/app.ts",
             "preLaunchTask": "ts-to-js",
             "outFiles": [
-                "${workspaceFolder}/backend/public/**/*.js"
+                "${workspaceFolder}/backend/app/**/*.js"
             ],
             "cwd": "${workspaceRoot}/backend",
             "protocol": "inspector",

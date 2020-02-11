@@ -21,20 +21,25 @@ import { apiRouter } from './routes/api.router'
 import { usersRouter } from './routes/users.router'
 import { mainRouter } from './routes/main.router'
 
+
 export default class App {
 
     private expressApp: express.Application = express();
     private server: Server = createServer(this.expressApp);
 
-    constructor() { }
-
-    start(): void {
+    constructor() {
         this.setProcessEvents();
         this.useMiddlewares();
         this.useRoutes();
         this.setPassportStrategies();
         this.setupSocketIOServer();
+    }
 
+    getExpressApp() {
+        return this.expressApp;
+    }
+
+    start(): void {
         this.startServer();
     }
 
@@ -49,7 +54,7 @@ export default class App {
 
     private useMiddlewares(): void {
         this.expressApp
-            .use(cors())
+            .use(cors({ origin: true }))
             .use(express.json())
             .use(express.urlencoded({ extended: false }))
     }
@@ -90,4 +95,4 @@ export default class App {
 
 }
 
-(new App()).start();
+// (new App()).start();
