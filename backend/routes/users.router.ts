@@ -1,6 +1,6 @@
 import express from 'express';
-import { socketModule } from '../modules/helpers/socketModule'
-import { responseModule } from '../modules/helpers/responseModule'
+import { socketModule } from '../modules/socketModule'
+import { responseModule } from '../modules/responseModule'
 
 const usersRouter = express.Router();
 

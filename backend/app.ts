@@ -9,7 +9,7 @@ import path from 'path'
 // helpers
 import config from './config'
 import { appLog } from './modules/helpers/logHelper'
-import { socketModule } from './modules/helpers/socketModule'
+import { socketModule } from './modules/socketModule'
 
 // passport imports
 import passport from 'passport'

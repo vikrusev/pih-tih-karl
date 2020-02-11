@@ -1,7 +1,7 @@
 const io = require('socket.io');
 
-import { appLog } from './logHelper'
-import UserModel from '../../schemas/user';
+import { appLog } from './helpers/logHelper'
+import UserModel from '../schemas/user';
 
 const socketModule = (() => {
 
