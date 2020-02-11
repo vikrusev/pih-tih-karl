@@ -12,6 +12,7 @@
     "test": "cd backend && npm test",
     "i": "cd frontend && npm i && cd ../backend && npm i",
     "heroku-prebuild": "npm run i",
+    "build": "cd frontend && npm run prod",
     
 
     "postinstall": "cd backend && npm run build-ts",
