@@ -29,7 +29,7 @@
     "tslint": "~5.11.0"
   },
   "scripts": {
-    "tsc": "tsc",
+    "tsc": "tsc -p tsconfig-prod.json",
     "build-ts": "npm run tsc"
   },
   "keywords": [],
