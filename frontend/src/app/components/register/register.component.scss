@@ -1,17 +1,27 @@
-.credentials {
-    margin-top: 1em;
-    margin-left: auto;
-    margin-right: auto;
-    width: 30%;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-}
-
-.infobox {
-    margin-top: 3em;
-    margin-left: auto;
-    margin-right: auto;
-    width: 30%;
+.register-form {
+    width: 40%;
+    min-width: 300px;
+    margin: 0 auto;
     text-align: center;
+
+    .credentials {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        margin-bottom: 20px;
+
+        .mat-form-field {
+            margin-bottom: 10px;
+        }
+
+        .mat-hint {
+            color: red;
+            text-transform: capitalize;
+        }
+    }
+
+    .register-error {
+        color: red;
+        margin-bottom: 20px;
+    }
 }
