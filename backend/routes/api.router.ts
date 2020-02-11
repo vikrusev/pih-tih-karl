@@ -6,30 +6,17 @@ import UserModel from '../schemas/user'
 
 import { responseModule } from '../modules/responseModule'
 
+import { registerRouter } from './register.router'
+
 const apiRouter = express.Router();
+
+apiRouter.use('/register', registerRouter);
 
 apiRouter.get('/users', (req, res) => {
     UserModel.find((err, users) => {
         responseModule.ok(res, users);
     });
 })
-
-apiRouter.post('/register', (req, res) => {
-    const { username, password, email } = req.body;
-
-    if (!username || !password || !email) {
-        responseModule.err(res, 'not enough information added', 400);
-    }
-
-    UserModel.create({ email, username, password }, (err, newUser) => {
-        if (err) {
-            // res.send('something went wrong'); //TODO: use error codes
-            responseModule.err(res, err, 400);
-        } else {
-            responseModule.ok(res, 'Success!');
-        }
-    });
-});
 
 apiRouter.post('/login', (req, res, next) => {
     passport.authenticate('login', (err, user, info) => {
