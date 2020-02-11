@@ -32,9 +32,14 @@ apiRouter.post('/login', (req, res, next) => {
 
             const token = jwt.sign({ user: user }, 'top_secret', { expiresIn: '12h' });
 
+            const userData = {
+                ...user.toObject(),
+                password: undefined
+            }
+
             responseModule.ok(res, {
                 token,
-                user
+                user: userData
             });
         });
     })(req, res, next);

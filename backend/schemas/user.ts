@@ -8,11 +8,6 @@ const profile = {
     visible: { type: Boolean, default: false }
 }
 
-const passwordHistory = [{
-    password: String,
-    changeDate: { type: Date, default: new Date() }
-}]
-
 const raceHistory = [{
     oponent: null,
     date: { type: Date, default: new Date() },
@@ -29,7 +24,6 @@ const userSchema: Schema<IUserDocumentModel> = new mongoose.Schema({
     losses: { type: Number, default: 0 },
     loginHistory: [Date],
     profile: profile,
-    passwordHistory: passwordHistory,
     raceHistory: raceHistory
 }, {
     // strict: false // if you don't see a field saved in the DB check this option
@@ -47,19 +41,20 @@ userSchema.pre<IUserDocumentModel>('save', async function (next): Promise<void> 
     next();
 });
 
-const processFindQuery = (users) => {
-    if (users) {
-        if (!Array.isArray(users)) {
-            users = [ users ];
-        }
-        users.forEach((user) => {
-            delete user.password;
-        });
-    }
-}
+// const processFindQuery = (users) => {
+//     if (users) {
+//         if (!Array.isArray(users)) {
+//             users = [ users ];
+//         }
 
-userSchema.post<IUserDocumentModel>('find', processFindQuery);
-userSchema.post<IUserDocumentModel>('findOne', processFindQuery);
+//         users.forEach((user) => {
+//             user.password = null;
+//         });
+//     }
+// }
+
+// userSchema.post<IUserDocumentModel>('find', processFindQuery);
+// userSchema.post<IUserDocumentModel>('findOne', processFindQuery);
 
 userSchema.methods.isValidPassword = async function (password: string): Promise<boolean> {
     const compare = await bcrypt.compare(password, this.password);

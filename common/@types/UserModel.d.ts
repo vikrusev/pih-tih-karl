@@ -10,7 +10,6 @@ declare global {
     }
 
     interface IUserWithHistories extends IBasicUser {
-        passwordHistory: IPasswordHistory[],
         loginHistory: Date[],
         raceHistory: IRaceHistory[]
     }
@@ -31,11 +30,6 @@ declare global {
         lastName?: String,
         birthDate?: Date,
         visible?: Boolean // false by default
-    }
-
-    interface IPasswordHistory {
-        password: String,
-        changeDate: Date
     }
 
     interface IRaceHistory {
