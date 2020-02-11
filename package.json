@@ -8,7 +8,6 @@
   "main": "backend/builds/prod/app.js",
   "scripts": {
     "ng": "cd frontend && npm run ng",
-    "build": "cd frontend && npm run build",
     "prod": "cd frontend && npm run prod",
     "test": "cd backend && npm test",
     "i": "cd frontend && npm i && cd ../backend && npm i",
@@ -18,7 +17,7 @@
     "postinstall": "cd backend && npm run build-ts",
 
     "start": "npm run serve",
-    "serve": "node backend/builds/prod/app.js"
+    "serve": "node backend/builds/prod/app.js"ß
   },
   "private": true
 }
