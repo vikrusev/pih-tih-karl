@@ -10,7 +10,7 @@
     "prod": "cd frontend && npm run prod",
     "test": "cd backend && npm test",
     "i": "cd frontend && npm i && cd ../backend && npm i",
-    "heroku-prebuild": "cd frontend && npm i && cd ../backend && npm i && tsc -p backend/tsconfig-prod.json",
+    "heroku-prebuild": "cd frontend && npm i && cd ../backend && npm i && tsc -p tsconfig-prod.json",
     "heroku-postbuild": "cd backend/builds/prod/app.js"
   },
   "private": true
