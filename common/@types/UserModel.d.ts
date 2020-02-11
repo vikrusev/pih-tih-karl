@@ -2,33 +2,31 @@ import { Document } from 'mongoose';
 
 declare global {
     interface IBasicUser {
-        username: String,
         email: String,
+        username: String,
         password: String,
         lastLogin: Date, // Date of last successful login
-        wins: Number,
-        losses: Number,
         profile: IUserProfile,
-        firstName: String,
-        lastName: String
     }
 
     interface IUserWithHistories extends IBasicUser {
         passwordHistory: IPasswordHistory[],
-        loginHistory: ILoginHistory[],
+        loginHistory: Date[],
         raceHistory: IRaceHistory[]
     }
 
     interface IExtendedUser extends IUserWithHistories {
-        fullName(): string,
+        wins: Number,
+        losses: Number
+    }
+    
+    interface IUserDocumentModel extends IExtendedUser, Document {
+        fullName(): String,
         isValidPassword(string): Promise<boolean>
     }
 
-    interface IUserDocumentModel extends IExtendedUser, Document { }
-
     interface IUserProfile {
         /* Personal data of the player */
-        email: String,
         firstName?: String,
         lastName?: String,
         birthDate?: Date,
@@ -40,18 +38,8 @@ declare global {
         changeDate: Date
     }
 
-    interface ILoginHistory {
-        date: Date,
-        invalidLogins: Number // Used to block login attempts if needed
-    }
-
-    interface IOponent {
-        userId: String,
-        username: String
-    }
-
     interface IRaceHistory {
-        oponent: IOponent,
+        oponent: String,
         date: Date
         status: Boolean, // Wheather the battle is a win or loss
         type: String // Type of race - attack, defence, bot attack
