@@ -2,7 +2,7 @@
   "name": "pih-tih-karl-full",
   "version": "1.0.0",
   "engines": {
-    "node": "12.x"
+    "node": "13.x"
   },
   "license": "MIT",
   "main": "backend/builds/prod/app.js",
