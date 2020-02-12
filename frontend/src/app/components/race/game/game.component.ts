@@ -19,6 +19,8 @@ export class GameComponent implements OnInit {
 
     activeCar: THREE.Scene;
 
+    renderScale: number = .9;
+
     constructor() { }
 
     ngOnInit() {
@@ -27,7 +29,9 @@ export class GameComponent implements OnInit {
         let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
         let renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setSize(
+            window.innerWidth * this.renderScale,
+            window.innerHeight * this.renderScale);
         renderer.setClearColor(0x999999, 1);
         let test = document.querySelector('.game3d');
         console.log(test)
@@ -191,7 +195,7 @@ export class GameComponent implements OnInit {
         };
         document.addEventListener("keydown", onDocumentKeyDown, false);
 
-        
+
         const onDocumentKeyUp = (event) => {
             var keyCode = event.which;
             if (!this.car1 && !this.car2)
@@ -207,14 +211,16 @@ export class GameComponent implements OnInit {
         };
         document.addEventListener("keyup", onDocumentKeyUp, false);
 
-        window.addEventListener('resize', onWindowResize, false);
-        function onWindowResize() {
+        const onWindowResize = () => {
 
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
 
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(
+                window.innerWidth * this.renderScale,
+                window.innerHeight * this.renderScale);
         }
+        window.addEventListener('resize', onWindowResize, false);
     }
 
 }
