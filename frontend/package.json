@@ -2,10 +2,10 @@
   "name": "pih-tih-karl",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
+    "ng": "ng build --prod",
     "start": "ng serve --open --proxy-config proxy.conf.json",
     "build": "ng build --configuration=development",
-    "prod": "ng build --prod",
+    "prod": "npm run ng",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
