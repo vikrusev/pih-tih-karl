@@ -19,6 +19,8 @@ interface ITableUser {
 })
 export class RaceMatTableComponent implements OnInit {
 
+    pendingRequest: boolean = true;
+
     onlineUsers: MatTableDataSource<ITableUser>;
     displayColumns: string[] = ['username', 'email', 'wins', 'losses'];
 
@@ -76,15 +78,20 @@ export class RaceMatTableComponent implements OnInit {
     }
 
     private async prepareTableData(): Promise<MatTableDataSource<ITableUser>> {
+        this.pendingRequest = true;
+        
         try {
             let allUsers: IExtendedUser[] = await this.usersService.getAllOnlineUsers();
             const currentUsername: String = this.usersService.getCurrentUsername();
 
             allUsers = allUsers.filter((user: ITableUser) => user.username !== currentUsername);
 
+            this.pendingRequest = false;
+
             return new MatTableDataSource(allUsers);
         }
         catch (e) {
+            this.pendingRequest = false;
             console.log(e);
             return null;
         }
