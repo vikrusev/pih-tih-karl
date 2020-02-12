@@ -11,7 +11,7 @@
 
     "build": "cd frontend && npm i && npm run prod",
     
-    "postinstall": "cd backend && npm run build-ts",
+    "postinstall": "cd backend && npm i && npm run build-ts",
 
     "start": "npm run serve",
     "serve": "node backend/builds/prod/app.js"
