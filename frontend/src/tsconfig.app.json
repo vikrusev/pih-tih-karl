@@ -4,7 +4,8 @@
     "outDir": "../out-tsc/app",
     "types": [
       "jest",
-      "node"
+      "node",
+      "offscreencanvas"
     ]
   },
   "exclude": [
