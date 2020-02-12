@@ -1,4 +1,5 @@
 import express from 'express';
+import moment from 'moment';
 
 import { socketModule } from '../modules/socketModule'
 import { responseModule } from '../modules/responseModule'
@@ -20,6 +21,9 @@ usersRouter.get('/online', async (req, res) => {
 usersRouter.patch('/update-profile', async (req, res) => {
     try {
         const { username, profile } = req.body;
+        
+        const birthDate: Date = new Date(profile.birthDate);
+        profile.birthDate = moment(birthDate).format('YYYY-MM-DD');
 
         const newUser = await UserModel.findOneAndUpdate({ username: username }, { $set: { profile: profile } }, { new: true }).lean();
 

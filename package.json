@@ -8,11 +8,8 @@
   "main": "backend/builds/prod/app.js",
   "scripts": {
     "i": "cd frontend && npm i && cd ../backend && npm i",
-
     "build": "cd frontend && npm i && npm run prod",
-    
     "postinstall": "cd backend && npm i && npm run build-ts",
-
     "start": "npm run serve",
     "serve": "node backend/builds/prod/app.js"
   },
