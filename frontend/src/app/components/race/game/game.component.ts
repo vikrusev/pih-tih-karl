@@ -144,8 +144,8 @@ export class GameComponent implements OnInit {
 
         let car1Lock = false;
         let car2Lock = false;
-        document.addEventListener("keydown", onDocumentKeyDown, false);
-        function onDocumentKeyDown(event) {
+
+        const onDocumentKeyDown = (event) => {
             var keyCode = event.which;
             if (!this.car1 && !this.car2)
                 return;
@@ -189,8 +189,10 @@ export class GameComponent implements OnInit {
                     scene.add(lightHem);
             }
         };
-        document.addEventListener("keyup", onDocumentKeyUp, false);
-        function onDocumentKeyUp(event) {
+        document.addEventListener("keydown", onDocumentKeyDown, false);
+
+        
+        const onDocumentKeyUp = (event) => {
             var keyCode = event.which;
             if (!this.car1 && !this.car2)
                 return;
@@ -203,6 +205,7 @@ export class GameComponent implements OnInit {
                 car2Lock = false;
             }
         };
+        document.addEventListener("keyup", onDocumentKeyUp, false);
 
         window.addEventListener('resize', onWindowResize, false);
         function onWindowResize() {
