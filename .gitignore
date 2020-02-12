@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /backend/builds
+/backend/public
 
 # dependencies
 backend/node_modules
