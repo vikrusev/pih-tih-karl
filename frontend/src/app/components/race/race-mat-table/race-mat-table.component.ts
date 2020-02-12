@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -26,6 +26,8 @@ export class RaceMatTableComponent implements OnInit {
     autoRefreshTableMS: number = 20000;
 
     tableRefreshInterval = null;
+
+    @Output() onChoose = new EventEmitter<String>();
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -88,6 +90,10 @@ export class RaceMatTableComponent implements OnInit {
             console.log(e);
             return null;
         }
+    }
+
+    choose(username: String): void {
+        this.onChoose.emit(username);
     }
 
 }
