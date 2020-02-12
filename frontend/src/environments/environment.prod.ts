@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: '',
+  apiUrl: 'https://pih-tih-karl.herokuapp.com',
   envName: 'prod',
-  backendUrl: 'http://localhost:3000'
+  backendUrl: 'https://pih-tih-karl.herokuapp.com'
 };
