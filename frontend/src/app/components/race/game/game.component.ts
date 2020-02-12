@@ -19,6 +19,10 @@ export class GameComponent implements OnInit {
 
     activeCar: THREE.Scene;
 
+    activeCarNumber; // 1 or 2
+
+    activeFinished = false;
+
     renderScale: number = .9;
 
     constructor() { }
@@ -62,7 +66,7 @@ export class GameComponent implements OnInit {
             scene.add(this.car1);
             scene.add(this.car2);
 
-            this.activeCar = this.car2;
+            this.activeCarSetup();
         }, undefined, function (error) {
             console.error(error);
         });
@@ -120,27 +124,36 @@ export class GameComponent implements OnInit {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
 
-            if (this.car1) {
-                this.car1.position.z -= this.car1Speed;
-                if (this.car1.position.z < -trackLength * trackRepeat + 6) {
-                    this.car1Speed = 0;
-                }
+            if (this.car1 && this.car2) {
+                this.reportPosition();
 
-                this.car2.position.z -= this.car2Speed;
-                if (this.car2.position.z < -trackLength * trackRepeat + 6) {
+                if (this.activeCarNumber == 1) {
+                    this.car1.position.z -= this.car1Speed;
+                    if (this.car1.position.z < -trackLength * trackRepeat + 6) {
+                        this.car1Speed = 0;
+                        this.reportFinish();
+                    }
+                    this.car1Speed -= .005;
+                    if (this.car1Speed < 0)
+                        this.car1Speed = 0;
+
+                    this.car2.position.z = this.getOpponentPosition();
+                } else if (this.activeCarNumber == 2) {
+                    this.car2.position.z -= this.car2Speed;
+                    if (this.car2.position.z < -trackLength * trackRepeat + 6) {
+                        this.car2Speed = 0;
+                        this.reportFinish();
+                    }
+                    this.car2Speed -= .005;
+                    if (this.car2Speed < 0)
                     this.car2Speed = 0;
+                    
+                    this.car1.position.z = this.getOpponentPosition();
                 }
-
-                this.car1Speed -= .005;
-                if (this.car1Speed < 0)
-                    this.car1Speed = 0;
-
-                this.car2Speed -= .005;
-                if (this.car2Speed < 0)
-                    this.car2Speed = 0;
 
                 // camera part
-                camera.position.z += (this.activeCar.position.z + 10 - camera.position.z) / 10;
+                if (this.activeCar)
+                    camera.position.z += (this.activeCar.position.z + 10 - camera.position.z) / 10;
 
             }
         }
@@ -154,23 +167,28 @@ export class GameComponent implements OnInit {
             if (!this.car1 && !this.car2)
                 return;
 
-            if (keyCode == 32 && !car1Lock) {
-                this.car1Speed += .1;
-                car1Lock = true;
+            if (keyCode == 32) {
+                if (this.activeCarNumber == 1 && !car1Lock) {
+                    this.car1Speed += .1;
+                    car1Lock = true;
+                } else if (this.activeCarNumber == 2 && !car2Lock) {
+                    this.car2Speed += .1;
+                    car2Lock = true;
+                }
             }
 
-            if (keyCode == 90 && !car2Lock) {
-                this.car2Speed += .1;
-                car2Lock = true;
-            }
+            // if (keyCode == 90 && !car2Lock) {
+            //     this.car2Speed += .1;
+            //     car2Lock = true;
+            // }
 
-            if (keyCode == 81) {
-                this.activeCar = this.car1;
-            }
+            // if (keyCode == 81) {
+            //     this.activeCar = this.car1;
+            // }
 
-            if (keyCode == 87) {
-                this.activeCar = this.car2;
-            }
+            // if (keyCode == 87) {
+            //     this.activeCar = this.car2;
+            // }
 
             if (keyCode == 49) {
                 let selectedObject = scene.getObjectByName("lightHem");
@@ -202,12 +220,16 @@ export class GameComponent implements OnInit {
                 return;
 
             if (keyCode == 32) {
-                car1Lock = false;
+                if (this.activeCarNumber == 1) {
+                    car1Lock = false;
+                } else if (this.activeCarNumber == 2) {
+                    car2Lock = false;
+                }
             }
 
-            if (keyCode == 90) {
-                car2Lock = false;
-            }
+            // if (keyCode == 90) {
+            //     car2Lock = false;
+            // }
         };
         document.addEventListener("keyup", onDocumentKeyUp, false);
 
@@ -221,6 +243,45 @@ export class GameComponent implements OnInit {
                 window.innerHeight * this.renderScale);
         }
         window.addEventListener('resize', onWindowResize, false);
+    }
+    reportPosition() {
+        this.getActiveCarPosition(); // TODO: send to socket
+    }
+    activeCarSetup() {
+        this.setActiveCar(1); // TODO: get responce
+    }
+
+    getOpponentPosition(): number {
+        return -50;
+    }
+
+    setActiveCar(no: number): void {
+        if (this.car1 && this.car2) {
+            if (no == 1) {
+                this.activeCar = this.car1;
+                this.activeCarNumber = 1;
+            } else if (no == 2) {
+                this.activeCar = this.car2;
+                this.activeCarNumber = 2;
+            }
+        }
+    }
+
+    getActiveCarPosition(): number {
+        if (this.activeCarNumber == 1 && this.car1) {
+            return this.car1.position.z;
+        } else if (this.activeCarNumber == 2 && this.car2) {
+            return this.car2.position.z;
+        } else {
+            return null;
+        }
+    }
+
+    reportFinish() {
+        if (!this.activeFinished) {
+            console.log('i have finished');
+            this.activeFinished = true;
+        }
     }
 
 }
