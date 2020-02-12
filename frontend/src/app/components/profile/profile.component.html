@@ -1,3 +1,29 @@
-<p>
-  profile works!
-</p>
+<div class="showform">
+    <mat-form-field>
+        <input type="text" matInput placeholder="Username" [ngModel]="user.username" disabled>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input type="text" matInput placeholder="Email" [ngModel]="user.email" disabled>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input type="text" matInput placeholder="First Name" [(ngModel)]="user.profile.firstName">
+    </mat-form-field>
+
+    <mat-form-field>
+        <input type="text" matInput placeholder="Last Name" [(ngModel)]="user.profile.lastName">
+    </mat-form-field>
+
+    <mat-form-field>
+        <input type="text" matInput placeholder="Birth Date" [(ngModel)]="user.profile.birthDate">
+    </mat-form-field>
+
+    <mat-checkbox [(ngModel)]="user.profile.visible" [checked]="user.profile.visible">Make my data visible to other players</mat-checkbox>
+
+    <div class="profile-error" *ngIf=" profileError">
+        {{ profileError }}
+    </div>
+
+    <button mat-stroked-button color="accent" (click)="updateData()">Update Data</button>
+</div>

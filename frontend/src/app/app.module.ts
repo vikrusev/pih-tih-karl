@@ -16,6 +16,7 @@ import { SharedModule } from './shared/shared.module'
 import { MatSliderModule } from '@angular/material/slider';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
@@ -64,6 +65,7 @@ import { RaceMatTableComponent } from './components/race/race-mat-table/race-mat
         MatSliderModule,
         MatToolbarModule,
         MatButtonModule,
+        MatCheckboxModule,
         MatFormFieldModule,
         MatInputModule,
         MatTableModule,
