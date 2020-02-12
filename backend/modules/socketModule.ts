@@ -55,8 +55,9 @@ const socketModule = (() => {
     const getSocketByUsername = (username: String) => {
         const allActiveSockets = getAllActiveSockets();
 
+        let socketUsername: String = null;
         for (const socket in allActiveSockets) {
-            const socketUsername: String = getSocketUsername(allActiveSockets[socket]);
+            socketUsername = getSocketUsername(allActiveSockets[socket]);
 
             if (username === socketUsername) {
                 return allActiveSockets[socket];
@@ -73,9 +74,9 @@ const socketModule = (() => {
                 if (challange.challangerID === id) {
                     return challange;
                 }
-                else if (challange.opponentID === id) {
-                    return challange
-                }
+            }
+            else if (challange.opponentID === id) {
+                return challange
             }
         }
 
