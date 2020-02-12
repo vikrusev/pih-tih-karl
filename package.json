@@ -7,14 +7,10 @@
   "license": "MIT",
   "main": "backend/builds/prod/app.js",
   "scripts": {
-    "ng": "cd frontend && npm run ng",
-    "prod": "cd frontend && npm run prod",
-    "test": "cd backend && npm test",
     "i": "cd frontend && npm i && cd ../backend && npm i",
     "heroku-prebuild": "npm run i",
     "build": "cd frontend && npm run prod",
     
-
     "postinstall": "cd backend && npm run build-ts",
 
     "start": "npm run serve",
