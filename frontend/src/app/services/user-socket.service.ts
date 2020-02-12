@@ -16,7 +16,9 @@ interface IncommingChallange {
 export class UserSocketService {
 
     socket = null;
+
     incomingChallange$: Subject<IncommingChallange> = new BehaviorSubject(null);
+    outgoingChallange$: Subject<Boolean> = new BehaviorSubject(null);
 
     constructor(private usersService: UsersService) { }
 
@@ -60,7 +62,7 @@ export class UserSocketService {
         })
 
         this.socket.on('challange-answer', (choice: Boolean) => {
-            console.log(choice);
+            this.outgoingChallange$.next(choice);
         })
 
         this.socket.on('connect_timeout', (timeout) => {

@@ -10,7 +10,7 @@ import { UserSocketService } from '../../services/user-socket.service'
 export class RaceComponent implements OnInit {
 
     showChallangePopup: Boolean = false;
-    
+
     challangeTitle: String = 'Challange a player';
     challangeBody: String = null;
 
@@ -19,7 +19,11 @@ export class RaceComponent implements OnInit {
     buttonConfirmText: String = 'Challange!';
     buttonDeclineText: String = 'Flee...';
 
-    constructor(private socketService: UserSocketService) { }
+    constructor(private userSocketService: UserSocketService) {
+        this.userSocketService.outgoingChallange$.subscribe((data) => {
+            this.showChallangePopup = data;
+        });
+    }
 
     ngOnInit() { }
 
@@ -31,7 +35,7 @@ export class RaceComponent implements OnInit {
     }
 
     confirmChallange(): void {
-        const socket = this.socketService.getCurrentSocket();
+        const socket = this.userSocketService.getCurrentSocket();
         socket.emit('challange-player', this.challangeUsername);
     }
 
