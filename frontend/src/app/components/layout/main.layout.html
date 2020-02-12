@@ -4,4 +4,9 @@
     <router-outlet>
         <!-- Inner layouts / components go here  -->
     </router-outlet>
+
+    <general-popup [display]="showChallangePopup" (onConfirm)="confirmChallange()" (onDecline)="declineChallange()"
+        [titleText]="challangeTitle" [(bodyText)]="challangeBody" [buttonTextConfirm]="buttonConfirmText"
+        [buttonTextDecline]="buttonDeclineText">
+    </general-popup>
 </div>

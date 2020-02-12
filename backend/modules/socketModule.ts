@@ -3,9 +3,15 @@ const io = require('socket.io');
 import { appLog } from './helpers/logHelper'
 import UserModel from '../schemas/user';
 
+interface ActiveChallange {
+    challangerID: string,
+    opponentID: string
+}
+
 const socketModule = (() => {
 
     let socketIO = null;
+    let activeChallanges: ActiveChallange[] = [];
 
     const socketIOInit = (server): void => {
         socketIO = io(server, { pingTimeout: 200000 });
@@ -31,18 +37,52 @@ const socketModule = (() => {
             wins: 1,
             losses: 1
         }
+
         for (const socket in allActiveSockets) {
             username = allActiveSockets[socket].request._query['username'];
 
             if (!usernames.includes(username)) {
                 const user = await UserModel.findOne({ username: username }, projection).lean();
-    
+
                 users.push(user);
                 usernames.push(username);
             }
         }
 
         return users;
+    }
+
+    const getSocketByUsername = (username: String) => {
+        const allActiveSockets = getAllActiveSockets();
+
+        let socketUsername: String = null;
+        for (const socket in allActiveSockets) {
+            socketUsername = getSocketUsername(allActiveSockets[socket]);
+
+            if (username === socketUsername) {
+                return allActiveSockets[socket];
+            }
+        }
+
+        return null;
+    }
+
+    const findActiveChallange = (id: String, challanger: Boolean = false): ActiveChallange => {
+        for (const challange of activeChallanges) {
+            // find by challanger socket ID
+            if (challanger && challange.challangerID === id) {
+                return challange;
+            }
+            else if (challange.opponentID === id) {
+                return challange
+            }
+        }
+
+        return null;
+    }
+
+    const getSocketUsername = (socket): String => {
+        return socket.request._query['username'];
     }
 
     const awaitEvents = (): void => {
@@ -58,6 +98,43 @@ const socketModule = (() => {
             appLog('info', 'A user has disconnected');
             client.disconnect();
         });
+
+        client.on('challange-player', (username: String) => {
+            const challangerUsername: String = getSocketUsername(client);
+            const opponentSocket = getSocketByUsername(username);
+
+            appLog('info', `${username} was challanged by ${challangerUsername}`);
+
+            if (opponentSocket) {
+                const data = {
+                    username: challangerUsername,
+                    message: `${challangerUsername} has challanged you!`
+                }
+
+                const newChallange: ActiveChallange = {
+                    challangerID: client.id,
+                    opponentID: opponentSocket.id
+                }
+                activeChallanges.push(newChallange)
+
+                opponentSocket.emit('incoming-challange', data);
+            }
+            else {
+                client.emit('user-not-found', `Opponent ${username} was not found!`);
+            }
+        })
+
+        client.on('answer-challange', (choice: Boolean) => {
+            const challangeData: ActiveChallange = findActiveChallange(client.id, true);
+
+            if (challangeData) {
+                const allSockets = getAllActiveSockets();
+                const opponentSocket = allSockets[challangeData.challangerID];
+
+                client.emit('challange-answer', choice);
+                opponentSocket.emit('challange-answer', choice);
+            }
+        })
 
         client.on('connect_timeout', (timeout) => {
             console.log(timeout)

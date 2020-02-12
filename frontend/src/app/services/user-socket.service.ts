@@ -1,8 +1,14 @@
 import { Injectable } from "@angular/core";
+import { Subject, BehaviorSubject } from 'rxjs';
 
 import * as io from 'socket.io-client'
 import { environment } from '../../environments/environment'
 import { UsersService } from './users.service'
+
+interface IncommingChallange {
+    username: String,
+    message: String
+}
 
 @Injectable({
     providedIn: 'root'
@@ -10,6 +16,9 @@ import { UsersService } from './users.service'
 export class UserSocketService {
 
     socket = null;
+
+    incomingChallange$: Subject<IncommingChallange> = new BehaviorSubject(null);
+    outgoingChallange$: Subject<Boolean> = new BehaviorSubject(null);
 
     constructor(private usersService: UsersService) { }
 
@@ -47,6 +56,14 @@ export class UserSocketService {
             this.socket = this.socket.close();
             this.socket = null;
         });
+
+        this.socket.on('incoming-challange', (data: IncommingChallange) => {
+            this.incomingChallange$.next(data);
+        })
+
+        this.socket.on('challange-answer', (choice: Boolean) => {
+            this.outgoingChallange$.next(choice);
+        })
 
         this.socket.on('connect_timeout', (timeout) => {
             console.log(`socket connect_timeout: ${timeout}`)
