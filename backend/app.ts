@@ -55,7 +55,8 @@ export default class App {
             .use(cors())
             .use(express.json())
             .use(express.urlencoded({ extended: false }))
-            .use(express.static(path.join(config.app_root)));
+            .use(express.static(path.join(config.app_root)))
+            .use('/static', express.static(path.join(config.app_root, '..', 'files')));
     }
 
     private setPassportStrategies(): void {
