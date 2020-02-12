@@ -70,10 +70,8 @@ const socketModule = (() => {
     const findActiveChallange = (id: String, challanger: Boolean = false): ActiveChallange => {
         for (const challange of activeChallanges) {
             // find by challanger socket ID
-            if (challanger) {
-                if (challange.challangerID === id) {
-                    return challange;
-                }
+            if (challanger && challange.challangerID === id) {
+                return challange;
             }
             else if (challange.opponentID === id) {
                 return challange
@@ -132,7 +130,7 @@ const socketModule = (() => {
             if (challangeData) {
                 const allSockets = getAllActiveSockets();
                 const opponentSocket = allSockets[challangeData.challangerID];
-                
+
                 client.emit('challange-answer', choice);
                 opponentSocket.emit('challange-answer', choice);
             }
