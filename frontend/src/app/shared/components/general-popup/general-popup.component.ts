@@ -48,7 +48,6 @@ export class GeneralPopupComponent {
     }
 
     close(): void {
-        this.display = false;
         this.onClose.emit(true);
     }
 

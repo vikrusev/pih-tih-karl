@@ -11,25 +11,40 @@ export class RaceComponent implements OnInit {
 
     showChallangePopup: Boolean = false;
 
-    challangeTitle: String = 'Challange a player';
+    challangeTitle: String = null;
     challangeBody: String = null;
 
     challangeUsername: String = null;
 
-    buttonConfirmText: String = 'Challange!';
-    buttonDeclineText: String = 'Flee...';
+    buttonConfirmText: String = null;
+    buttonDeclineText: String = null;
 
     constructor(private userSocketService: UserSocketService) {
         this.userSocketService.outgoingChallange$.subscribe((data: ChallangeAnswer) => {
-            this.showChallangePopup = data ? data.choice : false;
+            if (data) {
+                if (data.choice) {
+                    this.showChallangePopup = false;
+                }
+                else {
+                    this.challangeBody = `${this.challangeUsername} has declined!`
+                    this.buttonDeclineText = 'Close';
+                    this.buttonConfirmText = null;
+                }
+            }
         });
     }
 
     ngOnInit() { }
 
     challangePopup(username: String): void {
+        // load default texts
+        this.challangeTitle = 'Challange a player';
+        this.challangeBody = `You are about to challange ${this.challangeUsername}`;
+
         this.challangeUsername = username;
-        this.challangeBody = `You are about to challange ${username}`;
+
+        this.buttonConfirmText = 'Challange!';
+        this.buttonDeclineText = 'Flee...';
 
         this.showChallangePopup = true;
     }

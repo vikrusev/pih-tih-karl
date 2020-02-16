@@ -57,7 +57,6 @@ export class UserSocketService {
         })
 
         this.socket.on('challange-answer', (answer: ChallangeAnswer) => {
-            console.log(answer)
             this.outgoingChallange$.next(answer);
         })
 
