@@ -5,11 +5,6 @@ import * as io from 'socket.io-client'
 import { environment } from '../../environments/environment'
 import { UsersService } from './users.service'
 
-interface IncommingChallange {
-    username: String,
-    message: String
-}
-
 @Injectable({
     providedIn: 'root'
 })
@@ -18,7 +13,7 @@ export class UserSocketService {
     socket = null;
 
     incomingChallange$: Subject<IncommingChallange> = new BehaviorSubject(null);
-    outgoingChallange$: Subject<Boolean> = new BehaviorSubject(null);
+    outgoingChallange$: Subject<ChallangeAnswer> = new BehaviorSubject(null);
 
     constructor(private usersService: UsersService) { }
 
@@ -61,8 +56,9 @@ export class UserSocketService {
             this.incomingChallange$.next(data);
         })
 
-        this.socket.on('challange-answer', (choice: Boolean) => {
-            this.outgoingChallange$.next(choice);
+        this.socket.on('challange-answer', (answer: ChallangeAnswer) => {
+            console.log(answer)
+            this.outgoingChallange$.next(answer);
         })
 
         this.socket.on('connect_timeout', (timeout) => {

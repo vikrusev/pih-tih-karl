@@ -67,14 +67,10 @@ const socketModule = (() => {
         return null;
     }
 
-    const findActiveChallange = (id: String, challanger: Boolean = false): ActiveChallange => {
+    const findActiveChallange = (id: String): ActiveChallange => {
         for (const challange of activeChallanges) {
-            // find by challanger socket ID
-            if (challanger && challange.challangerID === id) {
+            if (challange.challangerID === id || challange.opponentID === id) {
                 return challange;
-            }
-            else if (challange.opponentID === id) {
-                return challange
             }
         }
 
@@ -125,14 +121,34 @@ const socketModule = (() => {
         })
 
         client.on('answer-challange', (choice: Boolean) => {
-            const challangeData: ActiveChallange = findActiveChallange(client.id, true);
+            const challangeData: ActiveChallange = findActiveChallange(client.id);
 
             if (challangeData) {
                 const allSockets = getAllActiveSockets();
                 const opponentSocket = allSockets[challangeData.challangerID];
 
-                client.emit('challange-answer', choice);
-                opponentSocket.emit('challange-answer', choice);
+                const activeCar: boolean = !!Math.round(Math.random());
+
+                client.emit('challange-answer', { choice, activeCar });
+                opponentSocket.emit('challange-answer', { choice, activeCar: !activeCar });
+            }
+        })
+
+        client.on('report-own-position', (position: number) => {
+            const challangeData: ActiveChallange = findActiveChallange(client.id);
+
+            if (challangeData) {
+                const allSockets = getAllActiveSockets();
+
+                let opponentSocket = null;
+                if (client.id === challangeData.challangerID) {
+                    opponentSocket = allSockets[challangeData.opponentID];
+                }
+                else {
+                    opponentSocket = allSockets[challangeData.challangerID];
+                }
+
+                opponentSocket.emit('report-opponent-position', position);
             }
         })
 
