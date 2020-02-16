@@ -1,13 +1,23 @@
 # pih-tih-karl
 Push the pedal to the metal.
 
+OR
+
+DESTROY YOUR KEYBOARD TO RACE
+
 The idea of the project is to have fun with friends and cars.
 
 ## Технологии:
 - Express.js
-- MongoDB 
+- Socket.io
+- Angular
+- TypeScript
 - ThreeJS
 - SCSS
+
+## PaaS:
+- MongoDB Atlas
+- Heroku
 
 ## Функционалности:
 - Възможност за игра с други играчи в реално време
