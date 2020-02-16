@@ -13,6 +13,9 @@ The idea of the project is to have fun with friends and cars.
 - Angular
 - TypeScript
 - ThreeJS
+- Angular Material UI
+- Mongoose
+- PassportJS
 - SCSS
 
 ## PaaS:
