@@ -20,8 +20,8 @@ export class RaceComponent implements OnInit {
     buttonDeclineText: String = 'Flee...';
 
     constructor(private userSocketService: UserSocketService) {
-        this.userSocketService.outgoingChallange$.subscribe((data) => {
-            this.showChallangePopup = data;
+        this.userSocketService.outgoingChallange$.subscribe((data: ChallangeAnswer) => {
+            this.showChallangePopup = data ? data.choice : false;
         });
     }
 
