@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 
-// const THREE = require('three');
 import * as THREE from 'three';
 import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../environments/environment'
+
+import { Light } from 'three';
 
 @Component({
     selector: 'app-game',
@@ -12,241 +13,257 @@ import { environment } from '../../../../environments/environment';
     styleUrls: ['./game.component.scss']
 })
 export class GameComponent implements OnInit {
-    car1: THREE.Scene;
-    car2: THREE.Scene;
+    car1: THREE.Scene = null;
+    car2: THREE.Scene = null;
     car1Speed: number = 0;
     car2Speed: number = 0;
 
-    activeCar: THREE.Scene;
-
-    activeCarNumber; // 1 or 2
-
-    activeFinished = false;
-
+    activeCar: THREE.Scene = null;
+    activeCarNumber: number = null; // 1 or 2
+    activeFinished: boolean = false;
     renderScale: number = .9;
+
+    scene: THREE.Scene = new THREE.Scene();
+    camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
+    loader: GLTFLoader = new GLTFLoader();
+
+    lights: Light[] = [];
+
+    readonly trackLength: number = 200;
+    readonly trackRepeat: number = 5;
+
+    car1Lock: boolean = false;
+    car2Lock: boolean = false;
+
+    readonly glbPath: string = `${environment.backendUrl}/static_files/glb`;
+
+    @ViewChild('game3d') game3d: ElementRef = null;
 
     constructor() { }
 
     ngOnInit() {
+        // set camera position
+        this.camera.position.set(0, 5, 6);
 
-        let scene = new THREE.Scene();
-        let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        // apend renderer
+        this.appendRenderer(this.game3d);
 
-        let renderer = new THREE.WebGLRenderer();
-        renderer.setSize(
+        // add lights
+        this.lights = this.initLights();
+        this.scene.add(this.lights[0]);
+
+        // prepare 3d models
+        this.setModels();
+
+        // start animation
+        this.animate();
+
+        // add event listeners
+        document.addEventListener("keydown", (e: KeyboardEvent) => this.onDocumentKeyDown(e), false);
+        document.addEventListener("keyup", (e: KeyboardEvent) => this.onDocumentKeyUp(e), false);
+
+        window.addEventListener('resize', () => this.onWindowResize(), false);
+    }
+
+    appendRenderer(element: ElementRef): void {
+        this.renderer.setSize(
             window.innerWidth * this.renderScale,
             window.innerHeight * this.renderScale);
-        renderer.setClearColor(0x999999, 1);
-        let test = document.querySelector('.game3d');
-        console.log(test)
-        test.appendChild(renderer.domElement);
 
+        this.renderer.setClearColor(0x999999, 1);
 
-        camera.position.set(0, 5, 6);
+        element.nativeElement.appendChild(this.renderer.domElement);
+    }
 
+    initLights(): Light[] {
         let lightHom = new THREE.AmbientLight(0xffffff);
         lightHom.name = "lightHom";
+
         let lightHem = new THREE.HemisphereLight(0xffffff, 0x222222, 1);
         lightHem.name = "lightHem";
-        scene.add(lightHem);
 
-        let loader = new GLTFLoader();
+        return [lightHem, lightHom];
+    }
 
-
-        const trackLength = 200;
-        const trackRepeat = 5;
-
-        loader.load(`${environment.backendUrl}/static/car.glb`, (gltf) => {
+    setModels(): void {
+        this.loader.load(`${this.glbPath}/car.glb`, (gltf: GLTF) => {
             this.car1 = gltf.scene;
-            this.car1.rotation.y -= 3.14159 / 2;
-            this.car2 = this.car1.clone();
+            this.car1.rotation.y -= Math.PI / 2;
 
+            this.car2 = this.car1.clone();
             this.car2.position.x -= 7.3;
 
-            scene.add(this.car1);
-            scene.add(this.car2);
+            this.scene.add(this.car1);
+            this.scene.add(this.car2);
 
             this.activeCarSetup();
-        }, undefined, function (error) {
+        }, undefined, (error) => {
             console.error(error);
         });
 
-        loader.load(`${environment.backendUrl}/static/track.glb`, (gltf) => {
+        this.loader.load(`${this.glbPath}/track.glb`, (gltf: GLTF) => {
             let track = gltf.scene;
-            track.rotation.y -= 3.14159 / 2;
+            track.rotation.y -= Math.PI / 2;
 
-            scene.add(track);
-            for (let i = 1; i < trackRepeat; i++) {
+            this.scene.add(track);
+
+            for (let i = 1; i < this.trackRepeat; i++) {
                 let repeatedTrack = track.clone();
-                repeatedTrack.position.z -= trackLength * i;
-                scene.add(repeatedTrack);
+                repeatedTrack.position.z -= this.trackLength * i;
+
+                this.scene.add(repeatedTrack);
             }
 
-        }, undefined, function (error) {
+        }, undefined, (error) => {
             console.error(error);
         });
 
-        loader.load(`${environment.backendUrl}/static/fence.glb`, (gltf) => {
+        this.loader.load(`${this.glbPath}/fence.glb`, (gltf: GLTF) => {
             let fenceRight = gltf.scene;
-            fenceRight.rotation.y -= 3.14159 / 2;
+            fenceRight.rotation.y -= Math.PI / 2;
+
             let fenceLeft = fenceRight.clone();
 
             fenceLeft.position.x -= 15.5;
 
-            scene.add(fenceLeft);
-            scene.add(fenceRight);
-            for (let i = 1; i < trackRepeat; i++) {
+            this.scene.add(fenceLeft);
+            this.scene.add(fenceRight);
+
+            for (let i = 1; i < this.trackRepeat; i++) {
                 let repeatedFenceLeft = fenceLeft.clone();
                 let repeatedFenceRight = fenceRight.clone();
-                repeatedFenceLeft.position.z -= trackLength * i;
-                repeatedFenceRight.position.z -= trackLength * i;
-                scene.add(repeatedFenceLeft);
-                scene.add(repeatedFenceRight);
+
+                repeatedFenceLeft.position.z -= this.trackLength * i;
+                repeatedFenceRight.position.z -= this.trackLength * i;
+
+                this.scene.add(repeatedFenceLeft);
+                this.scene.add(repeatedFenceRight);
             }
-        }, undefined, function (error) {
+        }, undefined, (error) => {
             console.error(error);
         });
 
-        loader.load(`${environment.backendUrl}/static/fence_short.glb`, (gltf) => {
+        this.loader.load(`${this.glbPath}/fence_short.glb`, (gltf: GLTF) => {
             let fenceMiddle = gltf.scene;
-            fenceMiddle.rotation.y -= 3.14159 / 2;
-            scene.add(fenceMiddle);
-            for (let i = 1; i < trackRepeat; i++) {
+            fenceMiddle.rotation.y -= Math.PI / 2;
+
+            this.scene.add(fenceMiddle);
+            for (let i = 1; i < this.trackRepeat; i++) {
                 let repeatedFenceMiddle = fenceMiddle.clone();
-                repeatedFenceMiddle.position.z -= trackLength * i;
-                scene.add(repeatedFenceMiddle);
+                repeatedFenceMiddle.position.z -= this.trackLength * i;
+
+                this.scene.add(repeatedFenceMiddle);
             }
-        }, undefined, function (error) {
+        }, undefined, (error) => {
             console.error(error);
         });
-
-        const animate = () => {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-
-            if (this.car1 && this.car2) {
-                this.reportPosition();
-
-                if (this.activeCarNumber == 1) {
-                    this.car1.position.z -= this.car1Speed;
-                    if (this.car1.position.z < -trackLength * trackRepeat + 6) {
-                        this.car1Speed = 0;
-                        this.reportFinish();
-                    }
-                    this.car1Speed -= .005;
-                    if (this.car1Speed < 0)
-                        this.car1Speed = 0;
-
-                    this.car2.position.z = this.getOpponentPosition();
-                } else if (this.activeCarNumber == 2) {
-                    this.car2.position.z -= this.car2Speed;
-                    if (this.car2.position.z < -trackLength * trackRepeat + 6) {
-                        this.car2Speed = 0;
-                        this.reportFinish();
-                    }
-                    this.car2Speed -= .005;
-                    if (this.car2Speed < 0)
-                    this.car2Speed = 0;
-                    
-                    this.car1.position.z = this.getOpponentPosition();
-                }
-
-                // camera part
-                if (this.activeCar)
-                    camera.position.z += (this.activeCar.position.z + 10 - camera.position.z) / 10;
-
-            }
-        }
-        animate();
-
-        let car1Lock = false;
-        let car2Lock = false;
-
-        const onDocumentKeyDown = (event) => {
-            var keyCode = event.which;
-            if (!this.car1 && !this.car2)
-                return;
-
-            if (keyCode == 32) {
-                if (this.activeCarNumber == 1 && !car1Lock) {
-                    this.car1Speed += .1;
-                    car1Lock = true;
-                } else if (this.activeCarNumber == 2 && !car2Lock) {
-                    this.car2Speed += .1;
-                    car2Lock = true;
-                }
-            }
-
-            // if (keyCode == 90 && !car2Lock) {
-            //     this.car2Speed += .1;
-            //     car2Lock = true;
-            // }
-
-            // if (keyCode == 81) {
-            //     this.activeCar = this.car1;
-            // }
-
-            // if (keyCode == 87) {
-            //     this.activeCar = this.car2;
-            // }
-
-            if (keyCode == 49) {
-                let selectedObject = scene.getObjectByName("lightHem");
-                console.log(selectedObject);
-                if (selectedObject)
-                    scene.remove(selectedObject);
-
-                let checkObject = scene.getObjectByName("lightHom");
-                if (!checkObject)
-                    scene.add(lightHom);
-            }
-
-            if (keyCode == 50) {
-                let selectedObject = scene.getObjectByName("lightHom");
-                if (selectedObject)
-                    scene.remove(selectedObject);
-
-                let checkObject = scene.getObjectByName("lightHem");
-                if (!checkObject)
-                    scene.add(lightHem);
-            }
-        };
-        document.addEventListener("keydown", onDocumentKeyDown, false);
-
-
-        const onDocumentKeyUp = (event) => {
-            var keyCode = event.which;
-            if (!this.car1 && !this.car2)
-                return;
-
-            if (keyCode == 32) {
-                if (this.activeCarNumber == 1) {
-                    car1Lock = false;
-                } else if (this.activeCarNumber == 2) {
-                    car2Lock = false;
-                }
-            }
-
-            // if (keyCode == 90) {
-            //     car2Lock = false;
-            // }
-        };
-        document.addEventListener("keyup", onDocumentKeyUp, false);
-
-        const onWindowResize = () => {
-
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-
-            renderer.setSize(
-                window.innerWidth * this.renderScale,
-                window.innerHeight * this.renderScale);
-        }
-        window.addEventListener('resize', onWindowResize, false);
     }
+
+    animate() {
+        // initiate new frame
+        requestAnimationFrame(() => this.animate());
+
+        this.renderer.render(this.scene, this.camera);
+
+        if (this.car1 && this.car2) {
+            this.reportPosition();
+
+            if (this.activeCarNumber == 1) {
+                this.car1.position.z -= this.car1Speed;
+                if (this.car1.position.z < -this.trackLength * this.trackRepeat + 6) {
+                    this.car1Speed = 0;
+                    this.reportFinish();
+                }
+                this.car1Speed -= .005;
+                if (this.car1Speed < 0)
+                    this.car1Speed = 0;
+
+                this.car2.position.z = this.getOpponentPosition();
+            } else if (this.activeCarNumber == 2) {
+                this.car2.position.z -= this.car2Speed;
+                if (this.car2.position.z < -this.trackLength * this.trackRepeat + 6) {
+                    this.car2Speed = 0;
+                    this.reportFinish();
+                }
+                this.car2Speed -= .005;
+                if (this.car2Speed < 0)
+                    this.car2Speed = 0;
+
+                this.car1.position.z = this.getOpponentPosition();
+            }
+
+            // camera part
+            if (this.activeCar) {
+                this.camera.position.z += (this.activeCar.position.z + 10 - this.camera.position.z) / 10;
+            }
+
+        }
+    }
+
+    onDocumentKeyDown(event: KeyboardEvent): void {
+        var keyCode = event.which;
+        if (!this.car1 && !this.car2)
+            return;
+
+        if (keyCode == 32) {
+            if (this.activeCarNumber == 1 && !this.car1Lock) {
+                this.car1Speed += .1;
+                this.car1Lock = true;
+            } else if (this.activeCarNumber == 2 && !this.car2Lock) {
+                this.car2Speed += .1;
+                this.car2Lock = true;
+            }
+        }
+
+        if (keyCode == 49) {
+            let selectedObject = this.scene.getObjectByName("lightHom");
+            if (selectedObject)
+                this.scene.remove(selectedObject);
+
+            let checkObject = this.scene.getObjectByName("lightHem");
+            if (!checkObject)
+                this.scene.add(this.lights[0]);
+        }
+
+        if (keyCode == 50) {
+            let selectedObject = this.scene.getObjectByName("lightHem");
+            if (selectedObject)
+                this.scene.remove(selectedObject);
+
+            let checkObject = this.scene.getObjectByName("lightHom");
+            if (!checkObject)
+                this.scene.add(this.lights[1]);
+        }
+    };
+
+    onDocumentKeyUp(event: KeyboardEvent): void {
+        const keyCode = event.which;
+        if (!this.car1 && !this.car2)
+            return;
+
+        if (keyCode == 32) {
+            if (this.activeCarNumber == 1) {
+                this.car1Lock = false;
+            } else if (this.activeCarNumber == 2) {
+                this.car2Lock = false;
+            }
+        }
+    };
+
+    onWindowResize(): void {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+
+        this.renderer.setSize(
+            window.innerWidth * this.renderScale,
+            window.innerHeight * this.renderScale);
+    }
+
     reportPosition() {
         this.getActiveCarPosition(); // TODO: send to socket
     }
+
     activeCarSetup() {
         this.setActiveCar(1); // TODO: get responce
     }

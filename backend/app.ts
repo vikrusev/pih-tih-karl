@@ -56,7 +56,7 @@ export default class App {
             .use(express.json())
             .use(express.urlencoded({ extended: false }))
             .use(express.static(path.join(config.app_root)))
-            .use('/static', express.static(path.join(config.app_root, '..', 'files')));
+            .use('/static_files', express.static(path.join(config.app_root, '..', 'static_files')));
     }
 
     private setPassportStrategies(): void {
