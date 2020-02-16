@@ -40,6 +40,7 @@ import { GameComponent } from './components/race/game/game.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { RaceComponent } from './components/race/race.component';
 import { RaceMatTableComponent } from './components/race/race-mat-table/race-mat-table.component';
+import { GarageComponent } from './components/garage/garage.component';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import { RaceMatTableComponent } from './components/race/race-mat-table/race-mat
         GameComponent,
         ProfileComponent,
         RaceComponent,
-        RaceMatTableComponent
+        RaceMatTableComponent,
+        GarageComponent
     ],
     imports: [
         SharedModule,
