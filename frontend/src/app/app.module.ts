@@ -10,7 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 
 // Custom modules
-import { SharedModule } from './shared/shared.module' 
+import { SharedModule } from './shared/shared.module'
 
 // Material modules
 import { MatSliderModule } from '@angular/material/slider';
@@ -21,6 +21,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 // Interceptors
 import { UrlInterceptor } from './interceptors/url.interceptor';
@@ -40,6 +41,7 @@ import { GameComponent } from './components/race/game/game.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { RaceComponent } from './components/race/race.component';
 import { RaceMatTableComponent } from './components/race/race-mat-table/race-mat-table.component';
+import { GarageComponent } from './components/garage/garage.component';
 
 
 @NgModule({
@@ -53,7 +55,8 @@ import { RaceMatTableComponent } from './components/race/race-mat-table/race-mat
         GameComponent,
         ProfileComponent,
         RaceComponent,
-        RaceMatTableComponent
+        RaceMatTableComponent,
+        GarageComponent
     ],
     imports: [
         SharedModule,
@@ -69,7 +72,8 @@ import { RaceMatTableComponent } from './components/race/race-mat-table/race-mat
         MatFormFieldModule,
         MatInputModule,
         MatTableModule,
-        MatPaginatorModule
+        MatPaginatorModule,
+        MatProgressBarModule
     ],
     providers: [
         {

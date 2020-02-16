@@ -1,6 +1,7 @@
 <mat-toolbar>
     <span>Tih-Pih-Karl</span>
     <button mat-button color="basic" routerLink="/">Home</button>
+    <button mat-button color="basic" routerLink="/garage">garage</button>
     <button mat-stroked-button color="warn" routerLink="/race">Play!</button>
     <div *ngIf="userService.user$ | async; then authenticated else guest">
         <!-- template will replace this div -->
