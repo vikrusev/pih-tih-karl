@@ -62,7 +62,7 @@ export class GarageComponent implements OnInit {
   }
 
   loadCar() {
-    this.loader.load(`${environment.backendUrl}/static/car_centered.glb`, (gltf) => {
+    this.loader.load(`${environment.backendUrl}/static_files/glb/car_centered.glb`, (gltf) => {
       this.car = gltf.scene;
 
       this.scene.add(this.car);

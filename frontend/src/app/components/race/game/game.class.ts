@@ -52,7 +52,7 @@ export class GameCanvas {
     readonly trackRepeat: number = 5;
 
     // path to 3d models
-    readonly glbPath: string = `${environment.backendUrl}/static_files/glb`;
+    readonly glbPath: string = `${environment.backendUrl}/static_files/glb`.toString();
 
     constructor(canvas: ElementRef, activeCar: Boolean) {
         this.game3d = canvas;
@@ -209,7 +209,7 @@ export class GameCanvas {
             this.myCar.speed += .1;
             this.myCar.lock = true;
         }
-        
+
         if (keyCode == 49 || keyCode == 50) {
             let lightHom = this.scene.getObjectByName("lightHom");
             let lightHem = this.scene.getObjectByName("lightHem");
@@ -246,12 +246,12 @@ export class GameCanvas {
     }
 
     reportPosition() {
-        this.reporter$.next({ emitEvent: 'report-own-position', data: this.myCar.car.position.z });
+        this.reporter$.next({ emitEvent: 'report-own', data: { type: 'position', value: this.myCar.car.position.z }});
     }
 
     reportFinish() {
         this.myCar.finished = true;
-        this.reporter$.next({ emitEvent: 'report-own-finish', data: this.myCar.car.position.z });
+        this.reporter$.next({ emitEvent: 'report-own', data: { type: 'finish', value: true }});
     }
 
     setOpponentPosition(position: number): void {

@@ -25,6 +25,16 @@ const socketModule = (() => {
         return socketIO.sockets.sockets;
     }
 
+    const getOpponentSocket = (ownId: string, challangeData: ActiveChallange): any => {
+        const allSockets = getAllActiveSockets();
+
+        if (ownId === challangeData.challangerID) {
+            return allSockets[challangeData.opponentID];
+        }
+        
+        return allSockets[challangeData.challangerID];
+    }
+
     const getAllActiveUsers = async (): Promise<IExtendedUser[]> => {
         const allActiveSockets = getAllActiveSockets();
         let usernames: string[] = [];
@@ -124,9 +134,7 @@ const socketModule = (() => {
             const challangeData: ActiveChallange = findActiveChallange(client.id);
 
             if (challangeData) {
-                const allSockets = getAllActiveSockets();
-                const opponentSocket = allSockets[challangeData.challangerID];
-
+                const opponentSocket = getOpponentSocket(client.id, challangeData);
                 const activeCar: boolean = !!Math.round(Math.random());
 
                 client.emit('challange-answer', { choice, activeCar });
@@ -134,21 +142,12 @@ const socketModule = (() => {
             }
         })
 
-        client.on('report-own-position', (position: number) => {
+        client.on('report-own', (report: GameReportSmall) => {
             const challangeData: ActiveChallange = findActiveChallange(client.id);
 
             if (challangeData) {
-                const allSockets = getAllActiveSockets();
-
-                let opponentSocket = null;
-                if (client.id === challangeData.challangerID) {
-                    opponentSocket = allSockets[challangeData.opponentID];
-                }
-                else {
-                    opponentSocket = allSockets[challangeData.challangerID];
-                }
-
-                opponentSocket.emit('report-opponent-position', position);
+                const opponentSocket = getOpponentSocket(client.id, challangeData);
+                opponentSocket.emit(`report-opponent-${report.type}`, report.value);
             }
         })
 
