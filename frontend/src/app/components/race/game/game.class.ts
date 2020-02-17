@@ -1,4 +1,4 @@
-import { OnInit, ElementRef, ViewChild } from '@angular/core';
+import { ElementRef } from '@angular/core';
 
 import * as THREE from 'three';
 import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -6,7 +6,7 @@ import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { environment } from '../../../../environments/environment'
 
 import { Light } from 'three';
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 interface Car {
     car: THREE.Scene,
@@ -52,7 +52,7 @@ export class GameCanvas {
     readonly trackRepeat: number = 5;
 
     // path to 3d models
-    readonly glbPath: string = `${environment.backendUrl}/static_files/glb`;
+    readonly glbPath: string = `${environment.backendUrl}/static_files/glb`.toString();
 
     constructor(canvas: ElementRef, activeCar: Boolean) {
         this.game3d = canvas;
@@ -105,8 +105,6 @@ export class GameCanvas {
             rightCar.position.x -= 7.3;
 
             [this.myCar.car, this.opponentCar.car] = this.activeCar ? [rightCar, leftCar] : [leftCar, rightCar];
-
-            console.log(this.activeCar)
 
             this.scene.add(this.myCar.car);
             this.scene.add(this.opponentCar.car);
@@ -207,19 +205,19 @@ export class GameCanvas {
             return;
         }
 
-        if (keyCode == 32) {
+        if (keyCode == 32 && !this.myCar.lock) {
             this.myCar.speed += .1;
             this.myCar.lock = true;
         }
 
-        if (keyCode == 50) {
-            let selectedObject = this.scene.getObjectByName("lightHem");
-            if (selectedObject)
-                this.scene.remove(selectedObject);
-
-            let checkObject = this.scene.getObjectByName("lightHom");
-            if (!checkObject)
-                this.scene.add(this.lights[1]);
+        if (keyCode == 49 || keyCode == 50) {
+            let lightHom = this.scene.getObjectByName("lightHom");
+            let lightHem = this.scene.getObjectByName("lightHem");
+    
+            this.scene.remove(lightHom);
+            this.scene.remove(lightHem);
+    
+            this.scene.add(this.lights[keyCode - 49]);
         }
     };
 
@@ -248,16 +246,12 @@ export class GameCanvas {
     }
 
     reportPosition() {
-        this.reporter$.next({ emitEvent: 'report-own-position', data: this.myCar.car.position.z });
+        this.reporter$.next({ emitEvent: 'report-own', data: { type: 'position', value: this.myCar.car.position.z }});
     }
 
     reportFinish() {
-        if (!this.myCar.finished) {
-            console.log('i have finished');
-            this.myCar.finished = true;
-
-            this.reporter$.next({ emitEvent: 'report-own-finish', data: this.myCar.car.position.z });
-        }
+        this.myCar.finished = true;
+        this.reporter$.next({ emitEvent: 'report-own', data: { type: 'finish', value: true }});
     }
 
     setOpponentPosition(position: number): void {

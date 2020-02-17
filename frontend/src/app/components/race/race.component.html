@@ -1,8 +1,10 @@
 <div class="app-race">
     <race-mat-table (onChoose)="challangePopup($event)"></race-mat-table>
 
-    <general-popup (onConfirm)="confirmChallange()" [display]="showChallangePopup" [titleText]="challangeTitle"
-        [(bodyText)]="challangeBody" [buttonTextConfirm]="buttonConfirmText" [buttonTextDecline]="buttonDeclineText">
+    <general-popup (onConfirm)="confirmChallange()" (onDecline)="showChallangePopup = false"
+        (onClose)="showChallangePopup = false" [display]="showChallangePopup" [pendingRequest]="pendingRequest"
+        [titleText]="challangeTitle" [(bodyText)]="challangeBody" [buttonTextConfirm]="buttonConfirmText"
+        [buttonTextDecline]="buttonDeclineText">
     </general-popup>
 
     <app-game></app-game>

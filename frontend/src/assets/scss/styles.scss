@@ -20,7 +20,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     height: $spinner-size;
     -webkit-animation: spin 1s linear infinite;
     animation: spin 1s linear infinite;
-    z-index: 225577 !important;
+    z-index: 100 !important;
 }
 
 @-webkit-keyframes spin {
