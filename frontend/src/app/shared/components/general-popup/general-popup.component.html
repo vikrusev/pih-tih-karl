@@ -2,13 +2,12 @@
     <div class="background-lid" (click)="close()"></div>
     <div class="popup-panel">
         <div class="text-center popup-panel-upper">
-            <span class="layer-x pull-right" (click)="close()">X</span>
             <h2 class="title">{{ titleText }}</h2>
             <p class="body">{{ bodyText }}</p>
         </div>
         <div class="text-center popup-panel-bottom">
-            <button *ngIf="hasConfirmButton" class="modal-small-button" [class.disabled]="pendingRequest" (click)="confirm()">{{ buttonTextConfirm }}</button>
-            <button *ngIf="hasDeclineButton" class="modal-small-button" [class.disabled]="pendingRequest" (click)="decline()">{{ buttonTextDecline }}</button>
+            <button *ngIf="buttonTextConfirm" class="modal-small-button" [class.disabled]="pendingRequest" (click)="confirm()">{{ buttonTextConfirm }}</button>
+            <button *ngIf="buttonTextDecline" class="modal-small-button" [class.disabled]="pendingRequest" (click)="decline()">{{ buttonTextDecline }}</button>
         </div>
         
 		<div *ngIf="pendingRequest" class="spinner center-fixed"></div>

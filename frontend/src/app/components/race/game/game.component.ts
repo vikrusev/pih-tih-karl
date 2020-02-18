@@ -44,7 +44,8 @@ export class GameComponent implements OnInit {
 
         this.gameCanvas.getReporter().subscribe((report: GameReport) => {
             if (report) {
-                this.socket.emit(report.emitEvent, report.data);
+                console.log(report.data)
+                this.socket.emit('answer-challange', report.data);
             }
         });
     }

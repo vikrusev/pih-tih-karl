@@ -10,9 +10,6 @@ export class GeneralPopupComponent {
 
     constructor() { }
 
-    hasConfirmButton = false;
-    hasDeclineButton = false;
-    
     /**
      * Make the popup visible or not
      */
@@ -21,8 +18,8 @@ export class GeneralPopupComponent {
     /**
      * Buttons for confirm / decline
      */
-    @Input() buttonTextConfirm: string;
-    @Input() buttonTextDecline: string;
+    @Input() buttonTextConfirm: string = null;
+    @Input() buttonTextDecline: string = null;
 
     /**
      * Data to be displayed
@@ -42,15 +39,6 @@ export class GeneralPopupComponent {
     @Output() onDecline = new EventEmitter<Boolean>();
     @Output() onClose = new EventEmitter<Boolean>();
 
-    ngOnInit() {
-        if (this.buttonTextConfirm) {
-            this.hasConfirmButton = true;
-        }
-        if (this.buttonTextDecline) {
-            this.hasDeclineButton = true;
-        }
-    }
-
     confirm(): void {
         this.onConfirm.emit(true);
     }
@@ -60,7 +48,6 @@ export class GeneralPopupComponent {
     }
 
     close(): void {
-        this.display = false;
         this.onClose.emit(true);
     }
 
