@@ -3,15 +3,14 @@ const io = require('socket.io');
 import { appLog } from './helpers/logHelper'
 import UserModel from '../schemas/user';
 
+interface PlayerData {
+    socketID: string,
+    readyState: boolean
+}
+
 interface ActiveChallange {
-    challangerData: {
-        socketID: string,
-        readyState: boolean
-    },
-    opponentData: {
-        socketID: string,
-        readyState: boolean
-    }
+    challangerData: PlayerData,
+    opponentData: PlayerData
 }
 
 const socketModule = (() => {
@@ -41,7 +40,7 @@ const socketModule = (() => {
         return allSockets[challangeData.challangerData.socketID];
     }
 
-    const playersData = (ownId: string, challangeData: ActiveChallange): any[] => {
+    const playersData = (ownId: string, challangeData: ActiveChallange): PlayerData[] => {
         if (ownId === challangeData.opponentData.socketID) {
             return [challangeData.opponentData, challangeData.challangerData];
         }
