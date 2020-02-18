@@ -1,0 +1,19 @@
+#info {
+    position: absolute;
+	top: 80px;
+	width: 100%;
+    text-align: center;
+    font-size: 40px;
+    font-weight: 700;
+    color: #ccc;
+    user-select: none;
+	z-index: 100;
+}
+
+#game3d {
+    position: relative;
+}
+
+.hidden {
+    display: none;
+}

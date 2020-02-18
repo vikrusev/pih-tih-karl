@@ -4,8 +4,14 @@ import { appLog } from './helpers/logHelper'
 import UserModel from '../schemas/user';
 
 interface ActiveChallange {
-    challangerID: string,
-    opponentID: string
+    challangerData: {
+        socketID: string,
+        readyState: boolean
+    },
+    opponentData: {
+        socketID: string,
+        readyState: boolean
+    }
 }
 
 const socketModule = (() => {
@@ -28,11 +34,19 @@ const socketModule = (() => {
     const getOpponentSocket = (ownId: string, challangeData: ActiveChallange): any => {
         const allSockets = getAllActiveSockets();
 
-        if (ownId === challangeData.challangerID) {
-            return allSockets[challangeData.opponentID];
+        if (ownId === challangeData.challangerData.socketID) {
+            return allSockets[challangeData.opponentData.socketID];
         }
-        
-        return allSockets[challangeData.challangerID];
+
+        return allSockets[challangeData.challangerData.socketID];
+    }
+
+    const playersData = (ownId: string, challangeData: ActiveChallange): any[] => {
+        if (ownId === challangeData.opponentData.socketID) {
+            return [challangeData.opponentData, challangeData.challangerData];
+        }
+
+        return [challangeData.challangerData, challangeData.opponentData];
     }
 
     const getAllActiveUsers = async (): Promise<IExtendedUser[]> => {
@@ -79,7 +93,7 @@ const socketModule = (() => {
 
     const findActiveChallange = (id: String): ActiveChallange => {
         for (const challange of activeChallanges) {
-            if (challange.challangerID === id || challange.opponentID === id) {
+            if (challange.challangerData.socketID === id || challange.opponentData.socketID === id) {
                 return challange;
             }
         }
@@ -118,8 +132,14 @@ const socketModule = (() => {
                 }
 
                 const newChallange: ActiveChallange = {
-                    challangerID: client.id,
-                    opponentID: opponentSocket.id
+                    challangerData: {
+                        socketID: client.id,
+                        readyState: false
+                    },
+                    opponentData: {
+                        socketID: opponentSocket.id,
+                        readyState: false
+                    }
                 }
                 activeChallanges.push(newChallange)
 
@@ -140,7 +160,33 @@ const socketModule = (() => {
                 client.emit('challange-answer', { choice, activeCar });
                 opponentSocket.emit('challange-answer', { choice, activeCar: !activeCar });
             }
-        })
+        });
+
+        client.on('ready-own', (ready: boolean) => {
+            const challangeData: ActiveChallange = findActiveChallange(client.id);
+
+            if (challangeData) {
+                if (ready) {
+                    let [ownData, opponentData] = playersData(client.id, challangeData);
+
+                    ownData.readyState = true;
+
+                    if (opponentData.readyState) {
+                        const opponentSocket = getOpponentSocket(client.id, challangeData);
+
+                        let count = 5;
+                        let interval = setInterval(() => {
+                            client.emit('race-counter', count);
+                            opponentSocket.emit('race-counter', count);
+
+                            count--;
+
+                            if (count === -1) { clearInterval(interval); }
+                        }, 1000);
+                    }
+                }
+            }
+        });
 
         client.on('report-own', (report: GameReportSmall) => {
             const challangeData: ActiveChallange = findActiveChallange(client.id);
