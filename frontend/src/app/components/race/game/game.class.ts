@@ -10,7 +10,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 
 interface Car {
     car: THREE.Scene,
-    finished: boolean,
+    finished?: boolean,
     lock?: boolean,
     speed?: number
 }
@@ -18,10 +18,12 @@ interface Car {
 export class GameCanvas {
 
     public gameStarted: boolean = false;
+    public gameFinished: boolean = false;
     public canvasReady$: Subject<boolean> = new BehaviorSubject<boolean>(false);
 
-    // report statuses
-    reporter$: Subject<GameReport> = new BehaviorSubject<GameReport>(null);
+    // game status reporters
+    public reporter$: Subject<GameReport> = new BehaviorSubject<GameReport>(null);
+    public endGameReporter$: Subject<EndReport> = new BehaviorSubject<EndReport>(null);
 
     // determine which car is controlled
     activeCar: Boolean = false; // false is 'left' car, 'true' is right car
@@ -29,14 +31,13 @@ export class GameCanvas {
     // both cars
     myCar: Car = {
         car: null,
+        finished: false,
         speed: 0,
-        lock: false,
-        finished: false
+        lock: false
     }
 
     opponentCar: Car = {
-        car: null,
-        finished: false
+        car: null
     }
 
     // scene settings
@@ -197,7 +198,7 @@ export class GameCanvas {
     animate() {
         // initiate new frame
         requestAnimationFrame(() => this.animate());
-        
+
         this.renderer.render(this.scene, this.camera);
 
         if (this.myCar.car && this.opponentCar.car) {
@@ -224,7 +225,6 @@ export class GameCanvas {
     }
 
     onDocumentKeyDown(event: KeyboardEvent): void {
-        console.log(this.gameStarted)
         if (!this.gameStarted)
             return;
 
@@ -272,21 +272,36 @@ export class GameCanvas {
             window.innerHeight * this.renderScale);
     }
 
-    getReporter(): Subject<GameReport> {
-        return this.reporter$;
-    }
-
     reportPosition() {
         this.reporter$.next({ emitEvent: 'report-own', data: { type: 'position', value: this.myCar.car.position.z } });
     }
 
     reportFinish() {
-        this.myCar.finished = true;
-        this.reporter$.next({ emitEvent: 'report-own', data: { type: 'finish', value: true } });
+        if (!this.gameFinished) {
+            this.myCar.finished = true;
+    
+            const coinsWon = 10;
+            this.reporter$.next({ emitEvent: 'report-own', data: { type: 'finish', value: coinsWon } });
+    
+            this.endGame(coinsWon);
+        }
     }
 
     setOpponentPosition(position: number): void {
         this.opponentCar.car.position.z = position;
+    }
+
+    endGame(coins: number) {
+        if (!this.gameFinished) {
+            if (!this.myCar.finished) {
+                this.endGameReporter$.next({ message: 'You lost!', subMessage: `Lost coins: ${coins}` });
+            }
+            else {
+                this.endGameReporter$.next({ message: 'You won!', subMessage: `Won coins: ${coins}` });
+            }
+        }
+
+        this.gameFinished = true;
     }
 
 }

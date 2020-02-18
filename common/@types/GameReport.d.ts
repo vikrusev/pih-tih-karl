@@ -1,9 +1,14 @@
 interface GameReportSmall {
     type: String,
-    value: Number | Boolean
+    value: any
 }
 
 interface GameReport {
     emitEvent: String,
     data: GameReportSmall
+}
+
+interface EndReport {
+    message: String,
+    subMessage: String
 }

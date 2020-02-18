@@ -14,7 +14,8 @@ export class GameComponent implements OnInit {
     socket: any = null;
     gameCanvas: GameCanvas = null;
 
-    gameText: string = "waiting server..";
+    gameText: String = "waiting server..";
+    gameSubtext: String = null;
 
     @ViewChild('game3d') game3d: ElementRef;
 
@@ -55,9 +56,20 @@ export class GameComponent implements OnInit {
             this.gameCanvas.setOpponentPosition(position);
         });
 
-        this.gameCanvas.getReporter().subscribe((report: GameReport) => {
+        this.socket.on('report-opponent-finish', (lostCoins: number) => {
+            this.gameCanvas.endGame(lostCoins);
+        });
+
+        this.gameCanvas.reporter$.subscribe((report: GameReport) => {
             if (report) {
                 this.socket.emit('report-own', report.data);
+            }
+        });
+
+        this.gameCanvas.endGameReporter$.subscribe((report: EndReport) => {
+            if (report) {
+                this.gameText = report.message;
+                this.gameSubtext = report.subMessage;
             }
         });
     }

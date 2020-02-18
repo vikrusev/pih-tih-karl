@@ -3,15 +3,14 @@ const io = require('socket.io');
 import { appLog } from './helpers/logHelper'
 import UserModel from '../schemas/user';
 
+interface PlayerData {
+    socketID: string,
+    readyState: boolean
+}
+
 interface ActiveChallange {
-    challangerData: {
-        socketID: string,
-        readyState: boolean
-    },
-    opponentData: {
-        socketID: string,
-        readyState: boolean
-    }
+    challangerData: PlayerData,
+    opponentData: PlayerData
 }
 
 const socketModule = (() => {
@@ -41,7 +40,7 @@ const socketModule = (() => {
         return allSockets[challangeData.challangerData.socketID];
     }
 
-    const playersData = (ownId: string, challangeData: ActiveChallange): any[] => {
+    const playersData = (ownId: string, challangeData: ActiveChallange): PlayerData[] => {
         if (ownId === challangeData.opponentData.socketID) {
             return [challangeData.opponentData, challangeData.challangerData];
         }
@@ -91,9 +90,18 @@ const socketModule = (() => {
         return null;
     }
 
-    const findActiveChallange = (id: String): ActiveChallange => {
+    const findActiveChallange = (id: String, remove: boolean = false): ActiveChallange => {
         for (const challange of activeChallanges) {
             if (challange.challangerData.socketID === id || challange.opponentData.socketID === id) {
+                if (remove) {
+                    // remove the active challange from the array
+                    const index = activeChallanges.indexOf(challange);
+
+                    if (index > -1) {
+                        activeChallanges.splice(index, 1);
+                    }
+                }
+
                 return challange;
             }
         }
@@ -189,11 +197,21 @@ const socketModule = (() => {
         });
 
         client.on('report-own', (report: GameReportSmall) => {
-            const challangeData: ActiveChallange = findActiveChallange(client.id);
+            const endGame = report.type === 'finish';
+            const challangeData: ActiveChallange = findActiveChallange(client.id, endGame);
 
             if (challangeData) {
                 const opponentSocket = getOpponentSocket(client.id, challangeData);
-                opponentSocket.emit(`report-opponent-${report.type}`, report.value);
+
+                if (endGame) {
+                    const coinsWon = report.value;
+                    const coinsLoss = 10;
+
+                    opponentSocket.emit(`report-opponent-${report.type}`, coinsLoss);
+                }
+                else {
+                    opponentSocket.emit(`report-opponent-${report.type}`, report.value);
+                }
             }
         })
 
