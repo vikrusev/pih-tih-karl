@@ -131,7 +131,7 @@ export class GarageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    window.removeEventListener('resize',  this.resizeCallback, false);
+    window.removeEventListener('resize', this.resizeCallback, false);
   }
 
 }
