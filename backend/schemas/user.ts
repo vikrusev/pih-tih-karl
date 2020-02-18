@@ -24,7 +24,8 @@ const userSchema: Schema<IUserDocumentModel> = new mongoose.Schema({
     losses: { type: Number, default: 0 },
     loginHistory: [Date],
     profile: profile,
-    raceHistory: raceHistory
+    raceHistory: raceHistory,
+    coins: { type: Number, default: 0 }
 }, {
     // strict: false // if you don't see a field saved in the DB check this option
 });

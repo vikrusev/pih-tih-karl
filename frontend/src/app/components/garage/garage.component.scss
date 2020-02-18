@@ -1,0 +1,39 @@
+.wrappable {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    min-width: 50%;
+    
+    @media screen and (max-width: 768px) {
+        min-width: 100%;
+    }
+}
+
+.title {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.control {
+    width: 100%;
+    display: flex;
+}
+
+.progress-bar {
+    margin-top: 1em;
+}
+
+.coin-text {
+    color: rgb(57, 215, 255);
+    font-weight: bold;
+    font-size: 2em;
+}

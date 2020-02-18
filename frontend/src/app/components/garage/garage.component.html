@@ -1,13 +1,23 @@
-<p>
-  garage works!
-</p>
+<div style="display: flex; justify-content: center;">
+  <p class="coin-text">you have 100 coins</p>
+</div>
 
-<div style="display: flex; flex-wrap: wrap;">
+<div class="wrappable">
   <div #car3d></div>
 
-  <div style="width: 30em; display: flex; flex-direction: column; min-width: 50%">
-    <mat-progress-bar mode="determinate" value="40" style="margin-bottom: 1em;"></mat-progress-bar>
-    <mat-progress-bar mode="determinate" value="40" style="margin-bottom: 1em;"></mat-progress-bar>
-    <mat-progress-bar mode="determinate" value="40" style="margin-bottom: 1em;"></mat-progress-bar>
+  <div class="controls">
+
+    <div *ngFor="let property of properties">
+      <div class="title">
+        <p class="bold">{{ property.name }}:</p>
+      </div>
+      <div class="control">
+        <button mat-button (click)="onDecrease(property.name)">-</button>
+        <mat-progress-bar mode="determinate" [value]="property.value" class="progress-bar"></mat-progress-bar>
+        <button mat-button (click)="onIncrease(property.name)">+</button>
+      </div>
+    </div>
+
   </div>
+
 </div>
