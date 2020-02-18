@@ -7,6 +7,7 @@ declare global {
         password: String,
         lastLogin: Date, // Date of last successful login
         profile: IUserProfile,
+        coins: Number
     }
 
     interface IUserWithHistories extends IBasicUser {
