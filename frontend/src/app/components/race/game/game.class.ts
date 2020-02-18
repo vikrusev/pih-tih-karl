@@ -17,6 +17,9 @@ interface Car {
 
 export class GameCanvas {
 
+    public gameStarted: boolean = false;
+    public canvasReady$: Subject<boolean> = new BehaviorSubject<boolean>(false);
+
     // report statuses
     reporter$: Subject<GameReport> = new BehaviorSubject<GameReport>(null);
 
@@ -97,84 +100,104 @@ export class GameCanvas {
     }
 
     setModels(): void {
-        this.loader.load(`${this.glbPath}/car.glb`, async (gltf: GLTF) => {
-            let leftCar: THREE.Scene = gltf.scene;
-            leftCar.rotation.y -= Math.PI / 2;
+        const carModel = new Promise((res, rej) => {
+            this.loader.load(`${this.glbPath}/car.glb`, async (gltf: GLTF) => {
+                let leftCar: THREE.Scene = gltf.scene;
+                leftCar.rotation.y -= Math.PI / 2;
 
-            let rightCar: THREE.Scene = leftCar.clone();
-            rightCar.position.x -= 7.3;
+                let rightCar: THREE.Scene = leftCar.clone();
+                rightCar.position.x -= 7.3;
 
-            [this.myCar.car, this.opponentCar.car] = this.activeCar ? [rightCar, leftCar] : [leftCar, rightCar];
+                [this.myCar.car, this.opponentCar.car] = this.activeCar ? [rightCar, leftCar] : [leftCar, rightCar];
 
-            this.scene.add(this.myCar.car);
-            this.scene.add(this.opponentCar.car);
+                this.scene.add(this.myCar.car);
+                this.scene.add(this.opponentCar.car);
 
-        }, undefined, (error) => {
-            console.error(error);
+                res();
+            }, undefined, (error) => {
+                rej(error);
+            });
         });
 
-        this.loader.load(`${this.glbPath}/track.glb`, (gltf: GLTF) => {
-            let track = gltf.scene;
-            track.rotation.y -= Math.PI / 2;
+        const trackModel = new Promise((res, rej) => {
+            this.loader.load(`${this.glbPath}/track.glb`, (gltf: GLTF) => {
+                let track = gltf.scene;
+                track.rotation.y -= Math.PI / 2;
 
-            this.scene.add(track);
+                this.scene.add(track);
 
-            for (let i = 1; i < this.trackRepeat; i++) {
-                let repeatedTrack = track.clone();
-                repeatedTrack.position.z -= this.trackLength * i;
+                for (let i = 1; i < this.trackRepeat; i++) {
+                    let repeatedTrack = track.clone();
+                    repeatedTrack.position.z -= this.trackLength * i;
 
-                this.scene.add(repeatedTrack);
-            }
+                    this.scene.add(repeatedTrack);
+                }
 
-        }, undefined, (error) => {
-            console.error(error);
+                res();
+            }, undefined, (error) => {
+                rej(error);
+            });
         });
 
-        this.loader.load(`${this.glbPath}/fence.glb`, (gltf: GLTF) => {
-            let fenceRight = gltf.scene;
-            fenceRight.rotation.y -= Math.PI / 2;
+        const fenceModel = new Promise((res, rej) => {
+            this.loader.load(`${this.glbPath}/fence.glb`, (gltf: GLTF) => {
+                let fenceRight = gltf.scene;
+                fenceRight.rotation.y -= Math.PI / 2;
 
-            let fenceLeft = fenceRight.clone();
+                let fenceLeft = fenceRight.clone();
 
-            fenceLeft.position.x -= 15.5;
+                fenceLeft.position.x -= 15.5;
 
-            this.scene.add(fenceLeft);
-            this.scene.add(fenceRight);
+                this.scene.add(fenceLeft);
+                this.scene.add(fenceRight);
 
-            for (let i = 1; i < this.trackRepeat; i++) {
-                let repeatedFenceLeft = fenceLeft.clone();
-                let repeatedFenceRight = fenceRight.clone();
+                for (let i = 1; i < this.trackRepeat; i++) {
+                    let repeatedFenceLeft = fenceLeft.clone();
+                    let repeatedFenceRight = fenceRight.clone();
 
-                repeatedFenceLeft.position.z -= this.trackLength * i;
-                repeatedFenceRight.position.z -= this.trackLength * i;
+                    repeatedFenceLeft.position.z -= this.trackLength * i;
+                    repeatedFenceRight.position.z -= this.trackLength * i;
 
-                this.scene.add(repeatedFenceLeft);
-                this.scene.add(repeatedFenceRight);
-            }
-        }, undefined, (error) => {
-            console.error(error);
+                    this.scene.add(repeatedFenceLeft);
+                    this.scene.add(repeatedFenceRight);
+                }
+
+                res();
+            }, undefined, (error) => {
+                rej(error);
+            });
         });
 
-        this.loader.load(`${this.glbPath}/fence_short.glb`, (gltf: GLTF) => {
-            let fenceMiddle = gltf.scene;
-            fenceMiddle.rotation.y -= Math.PI / 2;
+        const fenceShortModel = new Promise((res, rej) => {
+            this.loader.load(`${this.glbPath}/fence_short.glb`, (gltf: GLTF) => {
+                let fenceMiddle = gltf.scene;
+                fenceMiddle.rotation.y -= Math.PI / 2;
 
-            this.scene.add(fenceMiddle);
-            for (let i = 1; i < this.trackRepeat; i++) {
-                let repeatedFenceMiddle = fenceMiddle.clone();
-                repeatedFenceMiddle.position.z -= this.trackLength * i;
+                this.scene.add(fenceMiddle);
+                for (let i = 1; i < this.trackRepeat; i++) {
+                    let repeatedFenceMiddle = fenceMiddle.clone();
+                    repeatedFenceMiddle.position.z -= this.trackLength * i;
 
-                this.scene.add(repeatedFenceMiddle);
-            }
-        }, undefined, (error) => {
-            console.error(error);
+                    this.scene.add(repeatedFenceMiddle);
+                }
+
+                res();
+            }, undefined, (error) => {
+                rej(error);
+            });
+        });
+
+        Promise.all([carModel, trackModel, fenceModel, fenceShortModel]).then((data) => {
+            this.canvasReady$.next(true);
+        }).catch(err => {
+            console.error(err);
         });
     }
 
     animate() {
         // initiate new frame
         requestAnimationFrame(() => this.animate());
-
+        
         this.renderer.render(this.scene, this.camera);
 
         if (this.myCar.car && this.opponentCar.car) {
@@ -196,10 +219,15 @@ export class GameCanvas {
                 this.camera.position.z += (this.myCar.car.position.z + 10 - this.camera.position.z) / 10;
             }
 
+
         }
     }
 
     onDocumentKeyDown(event: KeyboardEvent): void {
+        console.log(this.gameStarted)
+        if (!this.gameStarted)
+            return;
+
         var keyCode = event.which;
         if (!this.myCar && !this.opponentCar) {
             return;
@@ -213,15 +241,18 @@ export class GameCanvas {
         if (keyCode == 49 || keyCode == 50) {
             let lightHom = this.scene.getObjectByName("lightHom");
             let lightHem = this.scene.getObjectByName("lightHem");
-    
+
             this.scene.remove(lightHom);
             this.scene.remove(lightHem);
-    
+
             this.scene.add(this.lights[keyCode - 49]);
         }
     };
 
     onDocumentKeyUp(event: KeyboardEvent): void {
+        if (!this.gameStarted)
+            return;
+
         const keyCode = event.which;
         if (!this.myCar.car && !this.opponentCar.car) {
             return;
@@ -246,12 +277,12 @@ export class GameCanvas {
     }
 
     reportPosition() {
-        this.reporter$.next({ emitEvent: 'report-own', data: { type: 'position', value: this.myCar.car.position.z }});
+        this.reporter$.next({ emitEvent: 'report-own', data: { type: 'position', value: this.myCar.car.position.z } });
     }
 
     reportFinish() {
         this.myCar.finished = true;
-        this.reporter$.next({ emitEvent: 'report-own', data: { type: 'finish', value: true }});
+        this.reporter$.next({ emitEvent: 'report-own', data: { type: 'finish', value: true } });
     }
 
     setOpponentPosition(position: number): void {

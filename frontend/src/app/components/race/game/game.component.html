@@ -3,4 +3,6 @@
 </p>
 
 
-<div [class.display]="gameCanvas" #game3d></div>
+<div [class.hidden]="!gameCanvas" #game3d id="game3d">
+  <div id="info">{{ gameText }}</div>
+</div>
