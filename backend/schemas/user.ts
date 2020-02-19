@@ -35,12 +35,8 @@ userSchema.pre<IUserDocumentModel>('save', async function (next): Promise<void> 
         return next();
     }
 
-    if (!this.password) {
-        const hash = await bcrypt.hash(this.password, 10);
-        this.password = hash;
-    } else {
-        throw Error('WTF No Password?!');
-    }
+    const hash = await bcrypt.hash(this.password, 10);
+    this.password = hash;
 
     next();
 });
