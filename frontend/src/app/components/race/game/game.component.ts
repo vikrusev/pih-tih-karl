@@ -14,7 +14,7 @@ export class GameComponent implements OnInit {
     socket: any = null;
     gameCanvas: GameCanvas = null;
 
-    gameText: String = "waiting server..";
+    gameText: String = 'waiting server..';
     gameSubtext: String = null;
 
     @ViewChild('game3d') game3d: ElementRef;
@@ -23,7 +23,7 @@ export class GameComponent implements OnInit {
 
     ngOnInit() {
         this.socket = this.socketService.getCurrentSocket();
-        
+
         this.socketService.outgoingChallange$.subscribe((data: ChallangeAnswer) => {
             if (data && data.choice) {
                 this.initGame(data.activeCar);
@@ -44,34 +44,44 @@ export class GameComponent implements OnInit {
     }
 
     initGame(activeCar: Boolean): void {
-        this.gameCanvas = new GameCanvas(this.game3d, activeCar);
+        if (!this.gameCanvas) {
+            this.gameCanvas = new GameCanvas(this.game3d, activeCar);
 
-        this.gameCanvas.canvasReady$.subscribe((ready: boolean) => {
-            if (ready) {
-                this.socket.emit('ready-own', true);
-            }
-        });
+            // apend renderer
+            this.gameCanvas.appendRenderer(this.game3d);
 
-        this.socket.on('report-opponent-position', (position: number) => {
-            this.gameCanvas.setOpponentPosition(position);
-        });
+            this.gameCanvas.canvasReady$.subscribe((ready: boolean) => {
+                if (ready) {
+                    this.socket.emit('ready-own', true);
+                }
+            });
 
-        this.socket.on('report-opponent-finish', (lostCoins: number) => {
-            this.gameCanvas.endGame(lostCoins);
-        });
+            this.socket.on('report-opponent-position', (position: number) => {
+                this.gameCanvas.setOpponentPosition(position);
+            });
 
-        this.gameCanvas.reporter$.subscribe((report: GameReport) => {
-            if (report) {
-                this.socket.emit('report-own', report.data);
-            }
-        });
+            this.socket.on('report-opponent-finish', (lostCoins: number) => {
+                this.gameCanvas.endGame(lostCoins);
+            });
 
-        this.gameCanvas.endGameReporter$.subscribe((report: EndReport) => {
-            if (report) {
-                this.gameText = report.message;
-                this.gameSubtext = report.subMessage;
-            }
-        });
+            this.gameCanvas.reporter$.subscribe((report: GameReport) => {
+                if (report) {
+                    this.socket.emit('report-own', report.data);
+                }
+            });
+
+            this.gameCanvas.endGameReporter$.subscribe((report: EndReport) => {
+                if (report) {
+                    this.gameText = report.message;
+                    this.gameSubtext = report.subMessage;
+                }
+            });
+        }
+        else {
+            this.gameCanvas.reset(activeCar);
+            this.gameText = 'waiting server...'
+            this.gameSubtext = null;
+        }
     }
 
 }

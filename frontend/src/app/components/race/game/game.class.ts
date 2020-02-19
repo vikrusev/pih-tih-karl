@@ -65,9 +65,6 @@ export class GameCanvas {
         // set camera position
         this.camera.position.set(0, 5, 6);
 
-        // apend renderer
-        this.appendRenderer(this.game3d);
-
         // add lights
         this.lights = this.initLights();
         this.scene.add(this.lights[0]);
@@ -77,6 +74,16 @@ export class GameCanvas {
 
         // start animation
         this.animate();
+    }
+
+    reset(activeCar: Boolean): void {
+        this.activeCar = activeCar;
+        this.myCar.car.position.z = 0;
+        this.opponentCar.car.position.z = 0;
+        this.gameFinished = false;
+        this.canvasReady$.next(false);
+        this.gameStarted = false;
+        this.canvasReady$.next(true);
     }
 
     appendRenderer(element: ElementRef): void {
@@ -219,7 +226,6 @@ export class GameCanvas {
             if (this.myCar) {
                 this.camera.position.z += (this.myCar.car.position.z + 10 - this.camera.position.z) / 10;
             }
-
 
         }
     }
