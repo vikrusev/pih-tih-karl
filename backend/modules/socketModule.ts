@@ -196,7 +196,7 @@ const socketModule = (() => {
             }
         });
 
-        client.on('report-own', (report: GameReportSmall) => {
+        client.on('report-own', async (report: GameReportSmall) => {
             const endGame = report.type === 'finish';
             const challangeData: ActiveChallange = findActiveChallange(client.id, endGame);
 
@@ -204,8 +204,10 @@ const socketModule = (() => {
                 const opponentSocket = getOpponentSocket(client.id, challangeData);
 
                 if (endGame) {
-                    const coinsWon = report.value;
-                    const coinsLoss = 10;
+                    // TODO: make a function to calc
+                    const coinsLoss = (-1) * 10;
+                    updateUserCoins(client, report.value);
+                    updateUserCoins(opponentSocket, coinsLoss, false);
 
                     opponentSocket.emit(`report-opponent-${report.type}`, coinsLoss);
                 }
@@ -213,7 +215,27 @@ const socketModule = (() => {
                     opponentSocket.emit(`report-opponent-${report.type}`, report.value);
                 }
             }
-        })
+        });
+
+        const updateUserCoins = (socket: any, coins: number, isWin: boolean = true): void => {
+            const username = getSocketUsername(socket);
+
+            UserModel.findOne({ username: username }, (_, data) => {
+                if (data) {
+                    data.coins += coins;
+                    data.coins = Math.max(data.coins, 0);
+
+                    if (isWin) {
+                        data.wins++;
+                    }
+                    else {
+                        data.losses++;
+                    }
+
+                    data.save();
+                }
+            })
+        }
 
         client.on('connect_timeout', (timeout) => {
             console.log(timeout)
