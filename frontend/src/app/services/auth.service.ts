@@ -51,7 +51,7 @@ export class AuthService {
         return JSON.parse(jsonPayload);
     };
 
-    private setData(token: string, user: IExtendedUser): void {
+    setData(token: string, user: IExtendedUser): void {
         this.token = token;
         this.usersService.setCurrentUser(user);
         this.userSocketService.createSocket();
@@ -59,23 +59,8 @@ export class AuthService {
         localStorage.setItem('JWT', token);
     }
 
-    login(username: String, password: String): void {
-        this.http.post(`/api/login`, { username, password })
-            .pipe(
-                tap((data: any) => {
-                    if (data.token) {
-                        this.setData(data.token, data.user);
-
-                        this.router.navigate(['/']);
-                    }
-                    else {
-                        console.log(data.error || data);
-                    }
-                })
-            )
-            .subscribe((data) => { }, (err) => {
-                console.log(err); // add message service
-            });
+    login(username: String, password: String): Promise<any> {
+        return this.http.post(`/api/login`, { username, password }).toPromise();
     }
 
     logout() {
