@@ -15,8 +15,9 @@ declare global {
     }
 
     interface IExtendedUser extends IUserWithHistories {
-        wins: Number,
-        losses: Number
+        wins: number,
+        losses: number,
+        coins: number
     }
     
     interface IUserDocumentModel extends IExtendedUser, Document {

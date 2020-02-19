@@ -280,6 +280,7 @@ export class GameCanvas {
         if (!this.gameFinished) {
             this.myCar.finished = true;
     
+            // TODO: make a function to calc coinsWon
             const coinsWon = 10;
             this.reporter$.next({ emitEvent: 'report-own', data: { type: 'finish', value: coinsWon } });
     
