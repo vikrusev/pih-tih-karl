@@ -12,7 +12,7 @@ The idea of the project is to have fun with friends and cars.
 
 - Express.js
 - Socket.io
-- Angular
+- Angular7
 - TypeScript
 - ThreeJS
 - Angular Material UI
